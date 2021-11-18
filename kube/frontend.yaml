@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-service
-          image: bitprj/frontend-service
+          image: tinyhats_reinvent/frontend-service
           ports:
             - containerPort: 3000
           imagePullPolicy: Always
@@ -29,4 +29,4 @@ spec:
   ports:
     - port: 80
       targetPort: 3000
-  type: LoadBalancer
+  type: ClusterIP
