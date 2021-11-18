@@ -10,9 +10,31 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: ["Frontend Service", "Gateway Service", "Admin Service", "Add Service", "Fetch Service", "Manipulation Service", "Moderate Service", "Upload Service"]
-        context: ["services/frontend-service", ".", "services/admin-service", "services/add-service", "services/fetch-service", "services/manipulation-service", "services/moderate-service", "services/upload-service"]
-        repository: ["frontend-service", "gateway-service", "admin-service", "add-service", "fetch-service", "manipulation-service", "moderate-service", "upload-service"]
+        include:
+          - name: "Frontend Service"
+            context: services/frontend-service
+            repository: frontend-service
+          - name: "Gateway Service"
+            context: .
+            repository: gateway-service
+          - name: "Admin Service"
+            context: services/admin-service
+            repository: admin-service
+          - name: "Add Service"
+            context: services/add-service
+            repository: add-service
+          - name: "Fetch Service"
+            context: services/fetch-service
+            repository: fetch-service
+          - name: "Manipulation Service"
+            context: services/manipulation-service
+            repository: manipulation-service
+          - name: "Moderate Service"
+            context: services/moderate-service
+            repository: moderate-service
+          - name: "Upload Service"
+            context: services/upload-service
+            repository: upload-service
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -36,8 +58,12 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/${{ matrix.repository }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache/${{ matrix.repository }}
+          cache-to: type=local,dest=/tmp/.buildx-cache-new/${{ matrix.repository }},mode=max
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new/${{ matrix.repository }} /tmp/.buildx-cache/${{ matrix.repository }}
 
 
 
