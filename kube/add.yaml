@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: add-service
-          image: tinyhats_reinvent/add-service
+          image: ${REGISTRY}/tinyhats_reinvent/add-service
           ports:
             - containerPort: 31337
           env:

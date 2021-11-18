@@ -45,8 +45,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -76,6 +74,7 @@ jobs:
       - name: Replace Environment Variables (GATEWAY)
         uses: danielr1996/envsubst-action@1.0.0
         env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           FETCH_ENDPOINT: ${{ secrets.UPLOAD_ENDPOINT }}
           ADD_ENDPOINT: ${{ secrets.ADD_ENDPOINT }}
           MODERATE_ENDPOINT: ${{ secrets.MODERATE_ENDPOINT }}
@@ -86,6 +85,7 @@ jobs:
       - name: Replace Environment Variables (ADD)
         uses: danielr1996/envsubst-action@1.0.0
         env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }} 
           UPLOAD_ENDPOINT: ${{ secrets.UPLOAD_ENDPOINT }}
         with:
           input: kube/add.yaml
@@ -94,6 +94,7 @@ jobs:
       - name: Replace Environment Variables (ADMIN)
         uses: danielr1996/envsubst-action@1.0.0
         env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           PASSWORD: ${{ secrets.PASSWORD }}
         with:
           input: kube/admin.yaml
@@ -110,6 +111,7 @@ jobs:
       - name: Replace Environment Variables (FETCH)
         uses: danielr1996/envsubst-action@1.0.0
         env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           HOST: ${{ secrets.HOST }}
           PASSWORD: ${{ secrets.PASSWORD }}
           MANIPULATE_ENDPOINT: ${{ secrets.MANIPULATE_ENDPOINT }}
@@ -119,12 +121,16 @@ jobs:
 
       - name: Replace Environment Variables (FRONTEND)
         uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         with:
           input: kube/frontend.yaml
           output: deploy/frontend.yaml
 
       - name: Replace Environment Variables (MANIPULATION)  
         uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         with:
           input: kube/manipulation.yaml
           output: deploy/manipulation.yaml
@@ -132,6 +138,7 @@ jobs:
       - name: Replace Environment Variables (MODERATE)
         uses: danielr1996/envsubst-action@1.0.0
         env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           HOST: ${{ secrets.HOST }}
           PASSWORD: ${{ secrets.PASSWORD }}
         with:
@@ -141,6 +148,7 @@ jobs:
       - name: Replace Environment Variables (UPLOAD)
         uses: danielr1996/envsubst-action@1.0.0
         env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           HOST: ${{ secrets.HOST }}
           PASSWORD: ${{ secrets.PASSWORD }}
           S3_ID: ${{ secrets.S3_ID }}

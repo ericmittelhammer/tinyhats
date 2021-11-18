@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: moderate-service
-          image: tinyhats_reinvent/moderate-service
+          image: ${REGISTRY}/tinyhats_reinvent/moderate-service
           ports:
             - containerPort: 5000
           env:

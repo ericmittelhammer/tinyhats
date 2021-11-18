@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-service
-          image: tinyhats_reinvent/frontend-service
+          image: ${REGISTRY}/tinyhats_reinvent/frontend-service
           ports:
             - containerPort: 3000
           imagePullPolicy: Always

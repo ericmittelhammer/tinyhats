@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: manipulation-service
-          image: tinyhats_reinvent/manipulation-service
+          image: ${REGISTRY}/tinyhats_reinvent/manipulation-service
           ports:
             - containerPort: 80
           imagePullPolicy: Always
