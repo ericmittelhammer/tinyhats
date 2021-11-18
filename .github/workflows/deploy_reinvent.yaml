@@ -30,63 +30,63 @@ jobs:
           context: services/frontend-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/frontend-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/frontend-service
       - name: Gateway Service
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/gateway-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/gateway-service
       - name: Admin Service
         uses: docker/build-push-action@v2
         with:
           context: services/admin-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/admin-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/admin-service
       - name: Add Service
         uses: docker/build-push-action@v2
         with:
           context: services/add-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/add-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/add-service
       - name: Fetch Service
         uses: docker/build-push-action@v2
         with:
           context: services/fetch-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/fetch-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/fetch-service
       - name: Fetch Service
         uses: docker/build-push-action@v2
         with:
           context: services/fetch-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/fetch-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/fetch-service
       - name: Manipulation Service
         uses: docker/build-push-action@v2
         with:
           context: services/manipulation-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/manipulation-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/manipulation-service
       - name: Moderate Service
         uses: docker/build-push-action@v2
         with:
           context: services/moderate-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/moderate-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/moderate-service
       - name: Upload Service
         uses: docker/build-push-action@v2
         with:
           context: services/upload-service
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: tinyhats_reinvent/upload-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/upload-service
   # deploy:
   #   needs: build
   #   runs-on: ubuntu-latest
