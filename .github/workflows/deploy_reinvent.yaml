@@ -58,12 +58,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/${{ matrix.repository }}
-          cache-from: type=local,src=/tmp/.buildx-cache/${{ matrix.repository }}
-          cache-to: type=local,dest=/tmp/.buildx-cache-new/${{ matrix.repository }},mode=max
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache/${{ matrix.repository }}
-          mv /tmp/.buildx-cache-new/${{ matrix.repository }} /tmp/.buildx-cache/${{ matrix.repository }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
 
 
