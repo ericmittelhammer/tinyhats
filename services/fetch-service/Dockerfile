@@ -1,6 +1,7 @@
 FROM node:12.0-slim
-COPY . .
+COPY package.json ./
 RUN npm install
+COPY . .
 CMD [ "node", "--experimental-modules", "index.js" ]
 
 # docker build -t manipulate .

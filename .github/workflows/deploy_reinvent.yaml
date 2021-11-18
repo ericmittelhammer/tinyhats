@@ -8,6 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: ["Frontend Service", "Gateway Service", "Admin Service", "Add Service", "Fetch Service", "Manipulation Service", "Moderate Service", "Upload Service"]
+        context: ["services/frontend-service", ".", "services/admin-service", "services/add-service", "services/fetch-service", "services/manipulation-service", "services/moderate-service", "services/upload-service"]
+        repository: ["frontend-service", "gateway-service", "admin-service", "add-service", "fetch-service", "manipulation-service", "moderate-service", "upload-service"]
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -24,69 +29,18 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      - name: Frontend Service
+      - name: ${{ matrix.name }}
         uses: docker/build-push-action@v2
         with:
-          context: services/frontend-service
+          context: ${{ matrix.context }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/frontend-service
-      - name: Gateway Service
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/gateway-service
-      - name: Admin Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/admin-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/admin-service
-      - name: Add Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/add-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/add-service
-      - name: Fetch Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/fetch-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/fetch-service
-      - name: Fetch Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/fetch-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/fetch-service
-      - name: Manipulation Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/manipulation-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/manipulation-service
-      - name: Moderate Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/moderate-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/moderate-service
-      - name: Upload Service
-        uses: docker/build-push-action@v2
-        with:
-          context: services/upload-service
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/upload-service
+          tags: ${{ steps.login-ecr.outputs.registry }}/tinyhats_reinvent/${{ matrix.repository}}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+
+
   # deploy:
   #   needs: build
   #   runs-on: ubuntu-latest

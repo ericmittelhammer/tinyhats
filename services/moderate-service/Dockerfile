@@ -10,8 +10,10 @@ ENV GO111MODULE=on \
 WORKDIR /build
 
 # Copy and download dependency using go mod
-COPY . .
+COPY go.mod go.sum ./
 RUN go mod download
+
+COPY . .
 
 # Build the application
 RUN go build -o main .
