@@ -1,4 +1,5 @@
 FROM node:12.0-slim
+WORKDIR /usr/src/app
 COPY . .
 RUN npm install
 CMD [ "node", "gateway.js" ]
