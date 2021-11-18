@@ -62,7 +62,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache-new/${{ matrix.repository }},mode=max
       - name: Move cache
         run: |
-          rm -rf /tmp/.buildx-cache
+          rm -rf /tmp/.buildx-cache/${{ matrix.repository }}
           mv /tmp/.buildx-cache-new/${{ matrix.repository }} /tmp/.buildx-cache/${{ matrix.repository }}
 
 
