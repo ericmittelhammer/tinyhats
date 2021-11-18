@@ -73,6 +73,17 @@ jobs:
         run: |
           mkdir deploy
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.K8S_ID }}
+          aws-secret-access-key: ${{ secrets.K8S_SECRET }}
+          aws-region: us-east-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Replace Environment Variables (GATEWAY)
         uses: danielr1996/envsubst-action@1.0.0
         env:
@@ -158,13 +169,6 @@ jobs:
         with:
           input: kube/upload.yaml
           output: deploy/upload.yaml
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.K8S_ID }}
-          aws-secret-access-key: ${{ secrets.K8S_SECRET }}
-          aws-region: us-east-2
    
       - name: Apply Configuration Changes
         uses: bitprj/kubernetes-action@master
