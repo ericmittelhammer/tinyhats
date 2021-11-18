@@ -34,6 +34,7 @@ spec:
   selector:
     app: gateway-service
   ports:
-    - port: 82
+    - port: 80
       targetPort: 4444
+      nodePort: 3101
   type: NodePort
