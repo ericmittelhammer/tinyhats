@@ -34,6 +34,6 @@ spec:
   selector:
     app: gateway-service
   ports:
-    - port: 80
+    - port: 82
       targetPort: 4444
-  type: ClusterIP
+  type: NodePort

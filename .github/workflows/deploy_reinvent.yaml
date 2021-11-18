@@ -148,12 +148,6 @@ jobs:
         with:
           input: kube/upload.yaml
           output: deploy/upload.yaml
-      
-      - name: Replace Environment Variables (INGRESS)
-        uses: danielr1996/envsubst-action@1.0.0
-        with:
-          input: kube/ingress.yaml
-          output: deploy/ingress.yaml
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -161,13 +155,6 @@ jobs:
           aws-access-key-id: ${{ secrets.K8S_ID }}
           aws-secret-access-key: ${{ secrets.K8S_SECRET }}
           aws-region: us-east-2
-
-      - name: Apply Ingress Controller
-        uses: bitprj/kubernetes-action@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        with:
-          args: apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.5/deploy/static/provider/baremetal/deploy.yaml
    
       - name: Apply Configuration Changes
         uses: bitprj/kubernetes-action@master
