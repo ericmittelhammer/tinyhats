@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: admin-service
-          image: ${REGISTRY}/tinyhats/admin-service
+          image: ${REGISTRY}/tinyhats_reinvent/admin-service
           ports:
             - containerPort: 4040
           env:
