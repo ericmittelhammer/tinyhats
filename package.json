@@ -1,0 +1,28 @@
+{
+  "name": "tinyhats",
+  "version": "1.0.0",
+  "description": "![image](https://user-images.githubusercontent.com/69332964/128773669-a4c000e4-bd8b-4e29-8498-f7f9d88027cd.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "commonize-fetch-service": "babel services/fetch-service --ignore=**/node_modules,**/dist --relative --out-dir=dist",
+    "commonize-frontend-service": "babel services/frontend-service --ignore=**/node_modules,**/dist --relative --out-dir=dist",
+    "commonize-upload-service": "babel services/upload-service --ignore=**/node_modules,**/dist --relative --out-dir=dist",
+    "commonize": "npm run commonize-fetch-service && npm run commonize-frontend-service && npm run commonize-upload-service;"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericmittelhammer/tinyhats.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericmittelhammer/tinyhats/issues"
+  },
+  "homepage": "https://github.com/ericmittelhammer/tinyhats#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.16.0"
+  }
+}
