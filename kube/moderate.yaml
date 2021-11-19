@@ -22,6 +22,12 @@ spec:
               value: mysql
             - name: PASSWORD
               value: password
+            - name: NEW_RELIC_LICENSE_KEY
+              value: "${NEW_RELIC_LICENSE_KEY}"
+            - name: NEW_RELIC_METADATA_REPOSITORY_URL
+              value: "${REPOSITORY_URL}"
+            - name: NEW_RELIC_METADATA_COMMIT
+              value: "${COMMIT}"
           imagePullPolicy: Always
 ---
 apiVersion: v1

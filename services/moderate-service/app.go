@@ -1,15 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+
 	// "fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/nobuyo/nrfiber"
 )
 
 func main() {
+	nrapp, err := newrelic.NewApplication(
+		newrelic.ConfigAppName("Add Service"),
+		newrelic.ConfigLicense(os.Getenv("NEW_RELIC_LICENSE_KEY")),
+	)
+	if err != nil {
+		fmt.Println("unable to create New Relic Application", err)
+	}
 	// Initialize the application
 	app := fiber.New()
+
+	app.Use(nrfiber.New(nrfiber.Config{
+		NewRelicApp: nrapp,
+	}))
 
 	app.Get("/moderate", func(c *fiber.Ctx) error {
 		log.Print("Moderate request received")
