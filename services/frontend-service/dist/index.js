@@ -22,7 +22,7 @@ const upload = _multer();
 
 // express is what helps us "route" the html pages. Usually on websites, you don't see /index.html. 
 // Why? Because they use routing! When you navigate to /about, the web server with THIS code returns the HTML about.html page.
-const _dirname = (0, _path.dirname)((0, _url.fileURLToPath)(import.meta.url));
+const _dirname = (0, _path.dirname)((0, _url.fileURLToPath)(require('url').pathToFileURL(__filename).toString()));
 
 app.set('view engine', 'ejs');
 app.set('views', _dirname); // this is just setting up configuration for where all the files are.
