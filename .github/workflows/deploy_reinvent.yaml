@@ -115,6 +115,9 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           PASSWORD: ${{ secrets.PASSWORD }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/admin.yaml
           output: deploy/admin.yaml
