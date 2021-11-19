@@ -24,8 +24,6 @@ spec:
               value: password
             - name: MANIPULATE_ENDPOINT
               value: manipulation-service:80
-            - name: NEW_RELIC_APP_NAME
-              value: "${NEW_RELIC_APP_NAME}"
             - name: NEW_RELIC_LICENSE_KEY
               value: "${NEW_RELIC_LICENSE_KEY}"
             - name: NEW_RELIC_METADATA_REPOSITORY_URL
