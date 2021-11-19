@@ -138,6 +138,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           MANIPULATE_ENDPOINT: ${{ secrets.MANIPULATE_ENDPOINT }}
           NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          NEW_RELIC_APP_NAME: "Fetch Service"
           REPOSITORY_URL: git@github.com:${{ github.repository }}.git
           COMMIT: ${{ github.sha }}
         with:
