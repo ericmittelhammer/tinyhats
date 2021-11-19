@@ -4,6 +4,10 @@ COPY package.json ./
 RUN sed -i '/\s*"type":\W*"module"/d' ./package.json
 RUN npm install
 COPY dist .
+COPY assets/audio assets/audio
+COPY assets/css assets/css
+COPY assets/img assets/img
+COPY pages ./pages
 CMD [ "node", "--experimental-modules", "-r", "newrelic", "index.js" ]
 
 # docker build -t manipulate .
