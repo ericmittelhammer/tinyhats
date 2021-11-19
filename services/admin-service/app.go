@@ -14,6 +14,7 @@ func main() {
 	nrapp, err := newrelic.NewApplication(
 		newrelic.ConfigAppName("Add Service"),
 		newrelic.ConfigLicense(os.Getenv("NEW_RELIC_LICENSE_KEY")),
+		newrelic.ConfigDebugLogger(os.Stdout),
 	)
 	if err != nil {
 		fmt.Println("unable to create New Relic Application", err)
