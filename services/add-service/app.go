@@ -77,6 +77,9 @@ func addService(w http.ResponseWriter, request *http.Request) {
 		log.Fatal(err)
 	}
 	client := &http.Client{}
+	client.Transport = newrelic.NewRoundTripper(client.Transport)
+	txn := newrelic.FromContext(request.Context())
+	req = newrelic.RequestWithTransactionContext(request, txn)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
