@@ -103,6 +103,9 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }} 
           UPLOAD_ENDPOINT: ${{ secrets.UPLOAD_ENDPOINT }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/add.yaml
           output: deploy/add.yaml
