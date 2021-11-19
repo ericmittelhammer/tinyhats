@@ -5,7 +5,7 @@ ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
-
+RUN apk --update add --no-cache ca-certificates openssl git tzdata && update-ca-certificates
 # Move to working directory /build
 WORKDIR /build
 
@@ -26,7 +26,7 @@ RUN cp /build/main .
 
 # Build a small image
 FROM scratch
-
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /dist/main /
 
 # Command to run
