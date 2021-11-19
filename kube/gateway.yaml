@@ -24,6 +24,12 @@ spec:
               value: add-service:80
             - name: MODERATE_ENDPOINT
               value: moderate-service:80
+            - name: NEW_RELIC_LICENSE_KEY
+              value: "${NEW_RELIC_LICENSE_KEY}"
+            - name: NEW_RELIC_METADATA_REPOSITORY_URL
+              value: "${REPOSITORY_URL}"
+            - name: NEW_RELIC_METADATA_COMMIT
+              value: "${COMMIT}"
           imagePullPolicy: Always
 ---
 apiVersion: v1

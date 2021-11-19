@@ -15,7 +15,7 @@ jobs:
             context: services/frontend-service
             repository: frontend-service
           - name: "Gateway Service"
-            context: .
+            context: services/gateway-service
             repository: gateway-service
           - name: "Admin Service"
             context: services/admin-service
@@ -91,6 +91,9 @@ jobs:
           FETCH_ENDPOINT: ${{ secrets.UPLOAD_ENDPOINT }}
           ADD_ENDPOINT: ${{ secrets.ADD_ENDPOINT }}
           MODERATE_ENDPOINT: ${{ secrets.MODERATE_ENDPOINT }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/gateway.yaml
           output: deploy/gateway.yaml
@@ -128,6 +131,9 @@ jobs:
           HOST: ${{ secrets.HOST }}
           PASSWORD: ${{ secrets.PASSWORD }}
           MANIPULATE_ENDPOINT: ${{ secrets.MANIPULATE_ENDPOINT }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/fetch.yaml
           output: deploy/fetch.yaml
@@ -136,6 +142,9 @@ jobs:
         uses: danielr1996/envsubst-action@1.0.0
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/frontend.yaml
           output: deploy/frontend.yaml
@@ -144,6 +153,9 @@ jobs:
         uses: danielr1996/envsubst-action@1.0.0
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/manipulation.yaml
           output: deploy/manipulation.yaml
@@ -166,6 +178,9 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           S3_ID: ${{ secrets.S3_ID }}
           S3_SECRET: ${{ secrets.S3_SECRET }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
         with:
           input: kube/upload.yaml
           output: deploy/upload.yaml
