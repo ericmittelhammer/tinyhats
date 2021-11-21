@@ -18,6 +18,8 @@ spec:
           ports:
             - containerPort: 3000
           env:
+            - name: NEW_RELIC_APP_NAME
+              value: "Front End Service"
             - name: NEW_RELIC_LICENSE_KEY
               value: "${NEW_RELIC_LICENSE_KEY}"
             - name: NEW_RELIC_METADATA_REPOSITORY_URL
