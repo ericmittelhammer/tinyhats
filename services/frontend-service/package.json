@@ -1,7 +1,6 @@
 {
     "name": "tinyhat.me",
     "version": "1.0.0",
-    "type": "module",
     "description": "COOL",
     "main": "index.js",
     "scripts": {

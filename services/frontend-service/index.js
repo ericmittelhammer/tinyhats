@@ -1,23 +1,23 @@
-import newrelic from 'newrelic'
-import express from 'express';
+require('newrelic')
+var express = require('express');
 var app = express();
 var router = express.Router();
-import multer from 'multer';
+var multer = require('multer');
 const upload = multer();
-import fetch from 'node-fetch'
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import FormData from 'form-data'
+var fetch = require('node-fetch');
+var dirname = require('path').dirname;
+var fileURLToPath = require('url').fileURLToPath;
+var FormData = require('form-data')
 
 // express is what helps us "route" the html pages. Usually on websites, you don't see /index.html. 
 // Why? Because they use routing! When you navigate to /about, the web server with THIS code returns the HTML about.html page.
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const dn = dirname(__filename);
 app.set('view engine', 'ejs');
-app.set('views', __dirname);
+app.set('views', dn);
 
 // this is just setting up configuration for where all the files are.
-const path = __dirname;
+const path = dn;
 
 //__dirname is the current directory we are in. Remember that every website literally has a computer running behind it!
 app.use('/', router);
