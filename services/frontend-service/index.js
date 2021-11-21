@@ -1,4 +1,4 @@
-require('newrelic');
+import newrelic from 'newrelic'
 import express from 'express';
 var app = express();
 var router = express.Router();
