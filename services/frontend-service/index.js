@@ -43,9 +43,9 @@ router.get('/admin', function (req, res) {
 router.get('/api/hat', upload.any(), async function (req, res) {
     let baseUrl = "http://gateway-service:80";
     const number = req.query.number ? req.query.number : "1";
-    console.log(req.body);
+    //console.log(req.body);
     let type = req.headers.type;
-    console.log(type);
+    //console.log(type);
 
     if (type) {
         baseUrl += `/${type}`;
@@ -54,10 +54,10 @@ router.get('/api/hat', upload.any(), async function (req, res) {
     baseUrl += `?number=${number}`;
 
 
-    console.log(baseUrl);
+    //console.log(baseUrl);
     let resp = await fetch(baseUrl);
     let data = await resp.json();
-    console.log(data);
+    //console.log(data);
     res.send(data);
 });
 
