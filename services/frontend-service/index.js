@@ -41,7 +41,7 @@ router.get('/admin', function (req, res) {
 });
 
 router.get('/api/hat', upload.any(), async function (req, res) {
-    let baseUrl = "http://gateway-service:80";
+    let baseUrl = "http://gateway-service:80/hatme";
     const number = req.query.number ? req.query.number : "1";
     //console.log(req.body);
     let type = req.headers.type;
@@ -63,7 +63,7 @@ router.get('/api/hat', upload.any(), async function (req, res) {
 
 router.post('/api/hat', upload.any(), async function (req, res) {
     console.log("post data");
-    let baseUrl = "http://gateway-service:80";
+    let baseUrl = "http://gateway-service:80/hatme";
     const number = req.query.number ? req.query.number : "1";
 
     let file = req.files[0].buffer;

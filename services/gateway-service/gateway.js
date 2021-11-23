@@ -34,12 +34,15 @@ function getNumber(req) {
     return param
 }
 
-router.post('/', upload.any(), async (req, res) => {
-    let param = getNumber(req)
+router.post('/hatme', upload.any(), async (req, res) => { 
+    let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
+    let params = baseUrl.searchParams;
+    params.append('number', req.query.number == undefined ? 1 : req.query.number);
+    params.append('style', req.params.apiName)
     let formData = new FormData()
     formData.append('file', req.files[0].buffer, {filename: "face", data: req.files[0].buffer})
     const formHeaders = formData.getHeaders();
-    const fetchResp = await fetch(`http://${process.env.FETCH_ENDPOINT}/fetch?` + param, {
+    const fetchResp = await fetch(baseUrl.toString(), {
         method: 'POST',
         body: formData,
         headers: {
@@ -51,7 +54,7 @@ router.post('/', upload.any(), async (req, res) => {
 
     var result = await fetchResp.json()
     res.send({result}) 
-})
+});
 
 router.post('/:apiName', upload.any(), async (req, res) => {
     console.log(`[!] ${req.params.apiName} was accessed.`)
@@ -81,28 +84,8 @@ router.post('/:apiName', upload.any(), async (req, res) => {
         var result = await addResp.json()
         console.log(`Received from /add: ${JSON.stringify(result)}`)
         res.send({result})
-    } else {
-        let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
-        let params = baseUrl.searchParams;
-        params.append('number', req.query.number == undefined ? 1 : req.query.number);
-        params.append('style', req.params.apiName)
-        let formData = new FormData()
-        formData.append('file', req.files[0].buffer, {filename: "face", data: req.files[0].buffer})
-        const formHeaders = formData.getHeaders();
-        const fetchResp = await fetch(baseUrl.toString(), {
-            method: 'POST',
-            body: formData,
-            headers: {
-            ...formHeaders,
-            },  
-        });
+    } 
 
-        console.log("Fetching base64 image")
-    
-        var result = await fetchResp.json()
-        res.send({result}) 
-    }
-})
 
 router.get('/', upload.any(), async (req, res) => {
     res.send({
@@ -110,6 +93,23 @@ router.get('/', upload.any(), async (req, res) => {
         "status": "ok"
     });
  })
+
+ router.get('/hatme', upload.any(), async (req, res) => { {
+    let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
+    let params = baseUrl.searchParams;
+    params.append('number', req.query.number == undefined ? 1 : req.query.number);
+    params.append('style', req.params.apiName) 
+    const addResp = await fetch(baseUrl.toString(), {
+        method: 'GET',      
+    });
+
+    console.log("Fetching base64 image")
+    
+    let responseCode = addResp.status
+
+    var result = await addResp.json()
+    res.status(responseCode).send({result}) 
+}
 
 router.get('/:apiName', upload.any(), async (req, res) => {
     console.log(`[!] ${req.params.apiName} was accessed.`)
@@ -131,22 +131,7 @@ router.get('/:apiName', upload.any(), async (req, res) => {
     
         var result = await adminResp.json()
         res.send({result})
-    } else {
-        let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
-        let params = baseUrl.searchParams;
-        params.append('number', req.query.number == undefined ? 1 : req.query.number);
-        params.append('style', req.params.apiName) 
-        const addResp = await fetch(baseUrl.toString(), {
-            method: 'GET',      
-        });
-    
-        console.log("Fetching base64 image")
-        
-        let responseCode = addResp.status
-    
-        var result = await addResp.json()
-        res.status(responseCode).send({result}) 
-}
+    } 
 })
 
 router.get('/api/:apiName', upload.any(), async (req, res) => {

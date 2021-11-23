@@ -10,7 +10,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name: ['Fetch Service'],
+  app_name: ['Hat Service'],
 
   /**
    * Your New Relic license key.
