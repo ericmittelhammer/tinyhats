@@ -17,7 +17,7 @@ winston.loggers.add('appLogger', {
     )
   });
 
-const logger = winston.loggers('appLogger');
+const logger = winston.loggers.get('appLogger');
 
 import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData } from './src/helpers.js'
 const upload = multer()

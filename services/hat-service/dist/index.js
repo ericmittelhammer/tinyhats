@@ -24,7 +24,7 @@ _winston.loggers.add('appLogger', {
   format: _winston.format.combine(_winstonEnricher())
 });
 
-const logger = _winston.loggers('appLogger');
+const logger = _winston.loggers.get('appLogger');
 
 const upload = _multer();
 

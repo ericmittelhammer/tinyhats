@@ -2,6 +2,9 @@ import { connect } from 'http2';
 import mysql from 'mysql2'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+import winston from 'winston'
+
+const logger = winston.loggers.get('appLogger');
 
 const HOST = process.env.HOST;
 const PASSWORD = process.env.PASSWORD;
@@ -16,7 +19,7 @@ const con = mysql.createConnection({
 export async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
     const results = await con.promise().query(sql)
-    console.log(`listpictures results: ${results}`);
+    logger.info(`listpictures results: ${results}`);
     return results
 };
 
@@ -33,17 +36,17 @@ export async function downloadBuffer(url) {
 export async function getSpecificHat(style) {
     var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
     const results = await con.promise().query(sql)
-        .catch(err => console.log(err))
-    console.log(`getSpecificHat results: ${JSON.stringify(results)}`);
+        .catch(err => logger.error(err))
+    logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
     let hatList = results[0]
-    console.log(hatList)
+    logger.info(hatList)
     if (hatList.length == 0){
         return null
     }
 
     let randNum = Math.floor(Math.random() * hatList.length)
     let hatLink = hatList[randNum].url
-    console.log(hatLink)
+    logger.info(hatLink)
 
     let image = await downloadBuffer(hatLink)
     image = Buffer.from(image)
@@ -54,9 +57,9 @@ export async function getSpecificHat(style) {
 export async function getHatData() {
     var sql = `SELECT description, url FROM main.images WHERE approve='true'`;
     const results = await con.promise().query(sql)
-    console.log(`gethatdata results: ${results}`);
+    logger.info(`gethatdata results: ${results}`);
     let hatList = results[0]
-    //console.log(hatList)
+    //logger.info(hatList)
 
     return hatList
 }
@@ -65,11 +68,11 @@ export async function getRandomHat() {
     // get random hat picture
     let hats = await listPictures()
     let hatList = hats[0]
-    console.log(hatList)
+    logger.info(hatList)
 
     let randNum = Math.floor(Math.random() * hatList.length)
     let hatLink = hatList[randNum].url
-    console.log(hatLink)
+    logger.info(hatLink)
 
     let image = await downloadBuffer(hatLink)
     image = Buffer.from(image)
@@ -87,10 +90,10 @@ export async function defaultBoss() {
 export async function requestManipulate(face, hat, numberHats) {
     // hit the upload endpoint to upload image and retrieve unique image id
     let faceData = face
-    console.log("Start loop")
-    console.log(numberHats)
+    logger.info("Start loop")
+    logger.info(numberHats)
     for (var i = numberHats; i >= 1; i--) {
-        console.log(i)
+        logger.info(i)
         let translate = i*0.6
         let rotate = i*10
         let formData = await createForm(faceData, hat)
@@ -111,7 +114,7 @@ export async function requestManipulate(face, hat, numberHats) {
             faceData = Buffer.from(b64Result.finalBaby.replace("data:image/png;base64,", ""), "base64");
         }
 
-        console.log(`Received response from /manipulate [${i}]`)
+        logger.info(`Received response from /manipulate [${i}]`)
     }
 
     return faceData
@@ -121,7 +124,7 @@ async function createForm(face, hat) {
     let formData = new FormData()
     formData.append('file', face, {filename: "face", data: face})
     formData.append('file', hat, {filename: "hat", data: hat})
-    console.log("Posting to Manipulate")
+    logger.info("Posting to Manipulate")
 
     return formData
 }
