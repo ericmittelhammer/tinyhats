@@ -40,9 +40,9 @@ async function applyHats(req, res, next) {
     
     let hat = null;
     if (req.query.style == undefined) {
-        let hat = await getRandomHat()
+        hat = await getRandomHat()
     } else {
-        let hat = await getSpecificHat(req.query.style)
+        hat = await getSpecificHat(req.query.style)
     }    
     if (hat == null) {
         console.log(`Coudln't find hat style ${req.query.style}`)
