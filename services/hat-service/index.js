@@ -60,12 +60,12 @@ router.get('/hatme', async(req, res, next) => {
     newrelic.addCustomAttribute('qs', req.query);
     newrelic.addCustomAttribute('customFace', false);
     req.face = await defaultBoss()
-    applyHats(req, res, next);
+    await applyHats(req, res, next);
 });
 
 router.post('/hatme', upload.any(), async(req, res) => {
     newrelic.addCustomAttribute('qs', req.query);
     newrelic.addCustomAttribute('customFace', true);
     req.face = req.files[0].buffer
-    applyHats(res, req, next);
+    await applyHats(res, req, next);
 }); 
