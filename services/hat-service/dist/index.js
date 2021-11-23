@@ -69,9 +69,17 @@ async function applyHats(req, res, next) {
   let hat = null;
 
   if (req.query.style == undefined) {
+    _newrelic.addCustomAttribute('random', true);
+
     hat = await (0, _helpers.getRandomHat)();
+
+    _newrelic.addCustomAttribute('style', hat.description);
   } else {
+    _newrelic.addCustomAttribute('random', false);
+
     hat = await (0, _helpers.getSpecificHat)(req.query.style);
+
+    _newrelic.addCustomAttribute('style', hat.description);
   }
 
   if (hat == null) {
@@ -82,9 +90,6 @@ async function applyHats(req, res, next) {
   }
 
   logger.info(`Got hat ${req.query.hatstyle}`);
-
-  _newrelic.addCustomAttribute('hatStyle', req.params.hatstyle);
-
   let b64Result = await (0, _helpers.requestManipulate)(req.face, hat, numHats);
   res.send(b64Result);
 }

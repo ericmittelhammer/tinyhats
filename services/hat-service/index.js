@@ -60,9 +60,13 @@ async function applyHats(req, res, next) {
     
     let hat = null;
     if (req.query.style == undefined) {
+        newrelic.addCustomAttribute('random', true);
         hat = await getRandomHat()
+        newrelic.addCustomAttribute('style', hat.description);
     } else {
-        hat = await getSpecificHat(req.query.style)
+        newrelic.addCustomAttribute('random', false);
+        hat = await getSpecificHat(req.query.style);
+        newrelic.addCustomAttribute('style', hat.description);
     }    
     if (hat == null) {
         logger.info(`Coudln't find hat style ${req.query.style}`)
@@ -71,7 +75,6 @@ async function applyHats(req, res, next) {
          });             
     }
     logger.info(`Got hat ${req.query.hatstyle}`);
-    newrelic.addCustomAttribute('hatStyle', req.params.hatstyle);
     let b64Result = await requestManipulate(req.face, hat, numHats)
     res.send(b64Result)
 }
