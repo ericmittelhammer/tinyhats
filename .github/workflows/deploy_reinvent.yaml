@@ -35,6 +35,9 @@ jobs:
           - name: "Upload Service"
             context: services/upload-service
             repository: upload-service
+          - name: "Locust Service"
+            context: services/locust-service
+            repository: locust-service
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -154,6 +157,17 @@ jobs:
         with:
           input: kube/frontend.yaml
           output: deploy/frontend.yaml
+      
+      - name: Replace Environment Variables (LOCUST)
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
+        with:
+          input: kube/locust.yaml
+          output: deploy/locust.yaml
 
       # - name: Replace Environment Variables (MANIPULATION)  
       #   uses: danielr1996/envsubst-action@1.0.0
