@@ -16,6 +16,7 @@ const con = mysql.createConnection({
 export async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
     const results = await con.promise().query(sql)
+    console.log(`listpictures results: ${results}`);
     return results
 };
 
@@ -33,7 +34,7 @@ export async function getSpecificHat(style) {
     var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
     const results = await con.promise().query(sql)
         .catch(err => console.log(err))
-    
+    console.log(`getSpecificHat results: ${results}`);
     let hatList = results[0]
     console.log(hatList)
     if (hatList.length == 0){
@@ -53,7 +54,7 @@ export async function getSpecificHat(style) {
 export async function getHatData() {
     var sql = `SELECT description, url FROM main.images WHERE approve='true'`;
     const results = await con.promise().query(sql)
-    
+    console.log(`gethatdata results: ${results}`);
     let hatList = results[0]
     //console.log(hatList)
 

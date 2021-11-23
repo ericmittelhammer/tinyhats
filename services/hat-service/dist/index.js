@@ -69,7 +69,7 @@ async function applyHats(req, res, next) {
 }
 
 router.get('/hatme', async (req, res, next) => {
-  _newrelic.addCustomAttribute('qs', req.query);
+  _newrelic.addCustomAttribute('qs', _url.parse(req.url).query);
 
   _newrelic.addCustomAttribute('customFace', false);
 
@@ -77,7 +77,7 @@ router.get('/hatme', async (req, res, next) => {
   await applyHats(req, res, next);
 });
 router.post('/hatme', upload.any(), async (req, res) => {
-  _newrelic.addCustomAttribute('qs', req.query);
+  _newrelic.addCustomAttribute('qs', _url.parse(req.url).query);
 
   _newrelic.addCustomAttribute('customFace', true);
 
