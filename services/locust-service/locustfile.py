@@ -1,27 +1,17 @@
 import random
 from locust import HttpUser, TaskSet, between
 
-hats = [
-  'baby',         'bucket',      'beach',
-  'spinner',      'cartoon',     'skull',
-  'blob',         'santa',       'st-patricks',
-  'santa',        'graduation',  'blob',
-  'pirate',       'pokemon',     'clown',
-  'spy',          'st-patricks', 'mario',
-  'tophat',       'pilot',       'tophat',
-  'construction', 'beach',       'poop',
-  'turkey',       'pepe',        'st-patricks',
-  'shark',        'alien',       'penguin',
-  'tinyhat',      'cat-ears',    'spicy',
-  'PIXIE'
-]
+# generate this with:
+# awk 'BEGIN {ORS=" "; print "[" } /.*INSERT INTO/ { print $9 } END { print "]"}' ../../kube/mysql-deployment.yaml
+
+hats = [ 'baby', 'bucket', 'Beach', 'spinner', 'cartoon', 'skull', 'Blob', 'santa', 'St-Patricks', 'santa', 'graduation', 'blob', 'pirate', 'pokemon', 'clown', 'Spy', 'st-patricks', 'Mario', 'tophat', 'pilot', 'tophat', 'construction', 'Beach', 'turkey', 'st-patricks', 'Shark', 'Alien', 'penguin', 'tinyhat', 'cat-ears', 'spicy', 'food' ]
 
 def index(l):
     l.client.get("/")
 
 
 def browseProduct(l):
-    l.client.get("/" + random.choice(hats))
+    l.client.get("/hatme?style=" + random.choice(hats))
 
 class UserBehavior(TaskSet):
 
