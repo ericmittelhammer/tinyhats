@@ -2,8 +2,6 @@
 
 var _newrelic = require("newrelic");
 
-var _winstonEnricher = require("@newrelic/winston-enricher");
-
 var _express = require("express");
 
 var _multer = require("multer");
@@ -11,6 +9,8 @@ var _multer = require("multer");
 var _url = require("url");
 
 var _winston = require("winston");
+
+var _winstonEnricher = require("@newrelic/winston-enricher");
 
 var _helpers = require("./src/helpers.js");
 

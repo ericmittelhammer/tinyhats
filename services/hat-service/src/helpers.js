@@ -1,3 +1,4 @@
+import newrelic from 'newrelic';
 import { connect } from 'http2';
 import mysql from 'mysql2'
 import fetch from 'node-fetch'
@@ -19,7 +20,7 @@ const con = mysql.createConnection({
 export async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
     const results = await con.promise().query(sql)
-    logger.info(`listpictures results: ${results}`);
+    logger.info(`listpictures results: ${JSON.stringify(results)}`);
     return results
 };
 
@@ -39,14 +40,14 @@ export async function getSpecificHat(style) {
         .catch(err => logger.error(err))
     logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
     let hatList = results[0]
-    logger.info(hatList)
+    logger.info(`hatList: ${JSON.stringify(hatList)}`)
     if (hatList.length == 0){
         return null
     }
 
     let randNum = Math.floor(Math.random() * hatList.length)
     let hatLink = hatList[randNum].url
-    logger.info(hatLink)
+    logger.info(`hatLink: ${hatLink}`)
 
     let image = await downloadBuffer(hatLink)
     image = Buffer.from(image)

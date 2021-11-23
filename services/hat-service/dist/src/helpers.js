@@ -11,6 +11,8 @@ exports.getSpecificHat = getSpecificHat;
 exports.listPictures = listPictures;
 exports.requestManipulate = requestManipulate;
 
+var _newrelic = require("newrelic");
+
 var _http = require("http2");
 
 var _mysql = require("mysql2");
@@ -36,7 +38,7 @@ const con = _mysql.createConnection({
 async function listPictures() {
   var sql = "SELECT * FROM main.images WHERE approve='true'";
   const results = await con.promise().query(sql);
-  logger.info(`listpictures results: ${results}`);
+  logger.info(`listpictures results: ${JSON.stringify(results)}`);
   return results;
 }
 
@@ -56,7 +58,7 @@ async function getSpecificHat(style) {
   const results = await con.promise().query(sql).catch(err => logger.error(err));
   logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
   let hatList = results[0];
-  logger.info(hatList);
+  logger.info(`hatList: ${JSON.stringify(hatList)}`);
 
   if (hatList.length == 0) {
     return null;
@@ -64,7 +66,7 @@ async function getSpecificHat(style) {
 
   let randNum = Math.floor(Math.random() * hatList.length);
   let hatLink = hatList[randNum].url;
-  logger.info(hatLink);
+  logger.info(`hatLink: ${hatLink}`);
   let image = await downloadBuffer(hatLink);
   image = Buffer.from(image);
   return image;

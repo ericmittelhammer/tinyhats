@@ -1,9 +1,9 @@
 import newrelic from 'newrelic'
-import newrelicFormatter from '@newrelic/winston-enricher';
 import express from 'express'
 import multer from 'multer'
 import url from 'url'
 import winston from 'winston'
+import newrelicFormatter from '@newrelic/winston-enricher'
 
 winston.loggers.add('appLogger', {
     level: 'info',
