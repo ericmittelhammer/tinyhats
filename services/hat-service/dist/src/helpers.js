@@ -50,7 +50,7 @@ async function downloadBuffer(url) {
 async function getSpecificHat(style) {
   var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
   const results = await con.promise().query(sql).catch(err => console.log(err));
-  console.log(`getSpecificHat results: ${results}`);
+  console.log(`getSpecificHat results: ${JSON.stringify(results)}`);
   let hatList = results[0];
   console.log(hatList);
 

@@ -2,13 +2,29 @@
 
 var _newrelic = require("newrelic");
 
+var _winstonEnricher = require("@newrelic/winston-enricher");
+
 var _express = require("express");
 
 var _multer = require("multer");
 
 var _url = require("url");
 
+var _winston = require("winston");
+
 var _helpers = require("./src/helpers.js");
+
+_winston.loggers.add('appLogger', {
+  level: 'info',
+  format: _winston.format.json(),
+  defaultMeta: {
+    service: 'hat-service'
+  },
+  transports: [new _winston.transports.Console()],
+  format: _winston.format.combine(_winstonEnricher())
+});
+
+const logger = _winston.loggers('appLogger');
 
 const upload = _multer();
 
@@ -20,8 +36,11 @@ const PORT = 1337; // for testing locally: node -r dotenv/config index.js
 // https://stackoverflow.com/questions/28305120/differences-between-express-router-and-app-get
 
 app.use('/', router);
+app.use(function (req, res, next) {
+  logger.info("requested", req.url);
+});
 app.listen(PORT, () => {
-  console.log(`Hats Service started on port ${PORT}`);
+  logger.info(`Hats Service started on port ${PORT}`);
 });
 
 async function numHats(req, res, next) {
@@ -29,9 +48,9 @@ async function numHats(req, res, next) {
 }
 
 router.get('/list', async (req, res) => {
-  console.log("Getting hats");
+  logger.info("Getting hats");
   let data = await (0, _helpers.getHatData)();
-  console.log(`fetched ${data.length} hats`);
+  logger.info(`fetched ${data.length} hats`);
 
   _newrelic.addCustomAttribute('hatListSize', data.length);
 
@@ -54,13 +73,13 @@ async function applyHats(req, res, next) {
   }
 
   if (hat == null) {
-    console.log(`Coudln't find hat style ${req.query.style}`);
+    logger.info(`Coudln't find hat style ${req.query.style}`);
     return res.status(400).send({
       message: 'This hat style does not exist! If you want this style - try submitting it'
     });
   }
 
-  console.log(`Got hat ${req.query.hatstyle}`);
+  logger.info(`Got hat ${req.query.hatstyle}`);
 
   _newrelic.addCustomAttribute('hatStyle', req.params.hatstyle);
 
@@ -69,7 +88,9 @@ async function applyHats(req, res, next) {
 }
 
 router.get('/hatme', async (req, res, next) => {
-  _newrelic.addCustomAttribute('qs', _url.parse(req.url).query);
+  let qs = _url.parse(req.url).query;
+
+  _newrelic.addCustomAttribute('qs', qs);
 
   _newrelic.addCustomAttribute('customFace', false);
 
@@ -77,7 +98,9 @@ router.get('/hatme', async (req, res, next) => {
   await applyHats(req, res, next);
 });
 router.post('/hatme', upload.any(), async (req, res, next) => {
-  _newrelic.addCustomAttribute('qs', _url.parse(req.url).query);
+  let qs = _url.parse(req.url).query;
+
+  _newrelic.addCustomAttribute('qs', qs);
 
   _newrelic.addCustomAttribute('customFace', true);
 
