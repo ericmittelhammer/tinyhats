@@ -55,7 +55,7 @@ export async function getHatData() {
     const results = await con.promise().query(sql)
     
     let hatList = results[0]
-    console.log(hatList)
+    //console.log(hatList)
 
     return hatList
 }

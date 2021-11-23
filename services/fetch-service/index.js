@@ -1,5 +1,7 @@
+import newrelic from 'newrelic'
 import express from 'express'
 import multer from 'multer'
+import url from 'url'
 
 import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData } from './src/helpers.js'
 const upload = multer()
@@ -14,71 +16,54 @@ const PORT = 1337
 app.use('/', router)
 
 app.listen(PORT, () => {
-    console.log(`API Gateway started on port ${PORT}`)
+    console.log(`Hats Service started on port ${PORT}`);
 })
 
-router.get('/fetch', upload.any(), async(req, res) => {
-    let style = req.query.style
-    let hats = req.query.hats
-    console.log(hats)
-    let face = await defaultBoss()
-    let b64Result = ''
-    let numberHats = ''
+async function numHats(req, res, next) {
 
-    if (req.query.number != undefined) {
-        numberHats = req.query.number
-    } else {
-        numberHats = 1
-    }
-    console.log(numberHats)
+    next();
+}
 
-    if (hats == "true") {
-        console.log("Getting hats")
-        let data = await getHatData()
-        console.log(data)
-        res.send(data)
-    } else if (style != undefined) {
-        console.log("No custom image, yes style")
-        let hat = await getSpecificHat(style)
-        if (hat == null) {
-            return res.status(400).send({
-                message: 'This hat style does not exist! If you want this style - try submitting it'
-             });             
-        }
-        console.log("Got specific hat")
-        b64Result = await requestManipulate(face, hat, numberHats)
-        res.send(b64Result)
-    } else {
-        console.log("No custom image, no style")
-        let hat = await getRandomHat()
-        b64Result = await requestManipulate(face, hat, numberHats)
-        res.send(b64Result)
-    }
+router.get('/list', async(req, res) => {
+    console.log("Getting hats")
+    let data = await getHatData()
+    console.log(`fetched ${data.length} hats`);
+ newrelic.addCustomAttribute('hatListSize', data.length);
+    res.send(data)
 });
 
-router.post('/fetch', upload.any(), async(req, res) => {
-    let style = req.query.style
-    let face = req.files[0].buffer
-    let b64Result = ''
-    let numberHats = ''
-
+async function applyHats(req, res, next) {
+    let numHats = 1;
     if (req.query.number != undefined) {
-        numberHats = parseInt(req.query.number)
-    } else {
-        numberHats = 1
+        numHats = 1
     }
-
-    if (style != undefined) {
-        console.log("Custom image, no style")
-        let hat = await getSpecificHat(style)
-
-        b64Result = await requestManipulate(face, hat, numberHats)
-    } else {
-        console.log("Custom image, yes style")
+    
+    let hat = null;
+    if (req.query.style == undefined) {
         let hat = await getRandomHat()
-
-        b64Result = await requestManipulate(face, hat, numberHats)
+    } else {
+        let hat = await getSpecificHat(req.query.style)
+    }    
+    if (hat == null) {
+        console.log(`Coudln't find hat style ${req.query.style}`)
+        return res.status(400).send({
+            message: 'This hat style does not exist! If you want this style - try submitting it'
+         });             
     }
-
+    console.log(`Got hat ${req.query.hatstyle}`);
+    newrelic.addCustomAttribute('hatStyle', req.params.hatstyle);
+    let b64Result = await requestManipulate(req.face, hat, numberHats)
     res.send(b64Result)
+}
+
+router.get('/hatme', numHats, async(req, res, next) => {
+    newrelic.addCustomAttribute('customFace', false);
+    req.face = await defaultBoss()
+    next();
+});
+
+router.post('/hatme', upload.any(), async(req, res) => {
+    newrelic.addCustomAttribute('customFace', true);
+    req.face = req.files[0].buffer
+    next();
 }); 

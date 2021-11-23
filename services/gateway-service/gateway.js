@@ -1,4 +1,5 @@
 require('newrelic');
+const url = require('url');
 const express = require('express')
 const multer = require('multer')
 const FormData = require('form-data')
@@ -81,11 +82,14 @@ router.post('/:apiName', upload.any(), async (req, res) => {
         console.log(`Received from /add: ${JSON.stringify(result)}`)
         res.send({result})
     } else {
-        let param = getNumber(req)
+        let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
+        let params = baseUrl.searchParams;
+        params.append('number', req.query.number == undefined ? 1 : req.query.number);
+        params.append('style', req.params.apiName)
         let formData = new FormData()
         formData.append('file', req.files[0].buffer, {filename: "face", data: req.files[0].buffer})
         const formHeaders = formData.getHeaders();
-        const fetchResp = await fetch(`http://${process.env.FETCH_ENDPOINT}/fetch?style=${route}&` + param, {
+        const fetchResp = await fetch(baseUrl.toString(), {
             method: 'POST',
             body: formData,
             headers: {
@@ -128,8 +132,11 @@ router.get('/:apiName', upload.any(), async (req, res) => {
         var result = await adminResp.json()
         res.send({result})
     } else {
-        let param = getNumber(req)
-        const addResp = await fetch(`http://${process.env.FETCH_ENDPOINT}/fetch?style=${route}&` + param, {
+        let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
+        let params = baseUrl.searchParams;
+        params.append('number', req.query.number == undefined ? 1 : req.query.number);
+        params.append('style', req.params.apiName) 
+        const addResp = await fetch(baseUrl.toString(), {
             method: 'GET',      
         });
     
@@ -147,7 +154,7 @@ router.get('/api/:apiName', upload.any(), async (req, res) => {
     let route = req.params.apiName;
     
     if (route == "hats") {
-        const addResp = await fetch(`http://${process.env.FETCH_ENDPOINT}/fetch?hats=true`, {
+        const addResp = await fetch(`http://${process.env.HATS_ENDPOINT}/list`, {
             method: 'GET',      
         });
 
