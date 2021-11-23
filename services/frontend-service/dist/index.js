@@ -1,36 +1,34 @@
 "use strict";
 
-var _express = require("express");
-
-var _multer = require("multer");
-
-var _nodeFetch = require("node-fetch");
-
-var _path = require("path");
-
-var _url = require("url");
-
-var _formData = require("form-data");
-
 require('newrelic');
 
-var app = _express();
+var express = require('express');
 
-var router = _express.Router();
+var app = express();
+var router = express.Router();
 
-const upload = _multer();
+var multer = require('multer');
 
-// express is what helps us "route" the html pages. Usually on websites, you don't see /index.html. 
+const upload = multer();
+
+var fetch = require('node-fetch');
+
+var dirname = require('path').dirname;
+
+var fileURLToPath = require('url').fileURLToPath;
+
+var FormData = require('form-data'); // express is what helps us "route" the html pages. Usually on websites, you don't see /index.html. 
 // Why? Because they use routing! When you navigate to /about, the web server with THIS code returns the HTML about.html page.
-const _dirname = (0, _path.dirname)((0, _url.fileURLToPath)(require('url').pathToFileURL(__filename).toString()));
 
+
+const dn = dirname(__filename);
 app.set('view engine', 'ejs');
-app.set('views', _dirname); // this is just setting up configuration for where all the files are.
+app.set('views', dn); // this is just setting up configuration for where all the files are.
 
-const path = _dirname; //__dirname is the current directory we are in. Remember that every website literally has a computer running behind it!
+const path = dn; //__dirname is the current directory we are in. Remember that every website literally has a computer running behind it!
 
 app.use('/', router);
-app.use('/assets', _express.static(path + '/assets')); // this is telling the website WHERE all of our "asset" files are. Asset files include CSS for styling, JS for Bootstrap to make it pretty, and images.
+app.use('/assets', express.static(path + '/assets')); // this is telling the website WHERE all of our "asset" files are. Asset files include CSS for styling, JS for Bootstrap to make it pretty, and images.
 
 router.get('/', function (req, res) {
   res.sendFile(path + '/pages/index.html');
@@ -45,20 +43,19 @@ router.get('/admin', function (req, res) {
 });
 router.get('/api/hat', upload.any(), async function (req, res) {
   let baseUrl = "http://gateway-service:80";
-  const number = req.query.number ? req.query.number : "1";
-  console.log(req.body);
-  let type = req.headers.type;
-  console.log(type);
+  const number = req.query.number ? req.query.number : "1"; //console.log(req.body);
+
+  let type = req.headers.type; //console.log(type);
 
   if (type) {
     baseUrl += `/${type}`;
   }
 
-  baseUrl += `?number=${number}`;
-  console.log(baseUrl);
-  let resp = await _nodeFetch(baseUrl);
-  let data = await resp.json();
-  console.log(data);
+  baseUrl += `?number=${number}`; //console.log(baseUrl);
+
+  let resp = await fetch(baseUrl);
+  let data = await resp.json(); //console.log(data);
+
   res.send(data);
 });
 router.post('/api/hat', upload.any(), async function (req, res) {
@@ -83,14 +80,14 @@ router.post('/api/hat', upload.any(), async function (req, res) {
 
   baseUrl += `?number=${number}`;
   console.log(baseUrl);
-  let resp = await _nodeFetch(baseUrl, options);
+  let resp = await fetch(baseUrl, options);
   let data = await resp.json();
   console.log(data);
   res.send(data);
 });
 
 async function createForm(file) {
-  let formData = new _formData();
+  let formData = new FormData();
   formData.append('file', file, {
     filename: "file",
     data: file
@@ -101,14 +98,14 @@ async function createForm(file) {
 
 router.get('/api/list', async function (req, res) {
   const baseUrl = "http://gateway-service:80/api/hats";
-  const resp = await _nodeFetch(baseUrl);
+  const resp = await fetch(baseUrl);
   const data = await resp.json();
   console.log(data);
   res.send(data);
 });
 router.get('/api/admin', async function (req, res) {
   let baseUrl = "http://gateway-service:80/admin";
-  let resp = await _nodeFetch(baseUrl);
+  let resp = await fetch(baseUrl);
   let data = await resp.json();
   res.send(data);
 });
@@ -116,7 +113,7 @@ router.get('/api/admin/moderate', async function (req, res) {
   let id = req.query.id;
   let approve = req.query.approve;
   let baseUrl = `http://gateway-service:80/moderate?id=${id}&approve=${approve}`;
-  let resp = await _nodeFetch(baseUrl);
+  let resp = await fetch(baseUrl);
   let data = await resp.json();
   console.log(data);
   res.send(data);
