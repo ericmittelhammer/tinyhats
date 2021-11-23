@@ -7,12 +7,12 @@ import winston from 'winston'
 
 winston.loggers.add('appLogger', {
     level: 'info',
-    format: winston.format.json(),
     defaultMeta: { service: 'hat-service' },
     transports: [
       new winston.transports.Console()
     ],
     format: winston.format.combine(
+        winston.format.json(),
         newrelicFormatter()
     )
   });
@@ -28,11 +28,13 @@ const PORT = 1337
 // for testing locally: node -r dotenv/config index.js  
 // https://stackoverflow.com/questions/28305120/differences-between-express-router-and-app-get
 
-
-app.use('/', router)
 app.use(function(req, res, next) {
     logger.info("requested", req.url);
+    next();
 })
+
+app.use('/', router)
+
 app.listen(PORT, () => {
     logger.info(`Hats Service started on port ${PORT}`);
 })
