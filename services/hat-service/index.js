@@ -52,7 +52,7 @@ async function applyHats(req, res, next) {
     }
     console.log(`Got hat ${req.query.hatstyle}`);
     newrelic.addCustomAttribute('hatStyle', req.params.hatstyle);
-    let b64Result = await requestManipulate(req.face, hat, numberHats)
+    let b64Result = await requestManipulate(req.face, hat, numHats)
     res.send(b64Result)
 }
 
