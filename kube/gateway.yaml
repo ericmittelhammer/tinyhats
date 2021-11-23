@@ -18,8 +18,8 @@ spec:
           ports:
             - containerPort: 4444
           env:
-            - name: FETCH_ENDPOINT
-              value: fetch-service:80
+            - name: HATS_ENDPOINT
+              value: hat-service:80
             - name: ADD_ENDPOINT
               value: add-service:80
             - name: MODERATE_ENDPOINT

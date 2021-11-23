@@ -23,9 +23,9 @@ jobs:
           - name: "Add Service"
             context: services/add-service
             repository: add-service
-          - name: "Fetch Service"
-            context: services/fetch-service
-            repository: fetch-service
+          - name: "Hat Service"
+            context: services/hat-service
+            repository: hat-service
           - name: "Manipulation Service"
             context: services/manipulation-service
             repository: manipulation-service
@@ -88,7 +88,7 @@ jobs:
         uses: danielr1996/envsubst-action@1.0.0
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          FETCH_ENDPOINT: ${{ secrets.UPLOAD_ENDPOINT }}
+          HATS_ENDPOINT: ${{ secrets.HATS_ENDPOINT }}
           ADD_ENDPOINT: ${{ secrets.ADD_ENDPOINT }}
           MODERATE_ENDPOINT: ${{ secrets.MODERATE_ENDPOINT }}
           NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
@@ -130,7 +130,7 @@ jobs:
           input: kube/mysql-deployment.yaml
           output: deploy/mysql-deployment.yaml
 
-      - name: Replace Environment Variables (FETCH)
+      - name: Replace Environment Variables (HAT)
         uses: danielr1996/envsubst-action@1.0.0
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -141,8 +141,8 @@ jobs:
           REPOSITORY_URL: git@github.com:${{ github.repository }}.git
           COMMIT: ${{ github.sha }}
         with:
-          input: kube/fetch.yaml
-          output: deploy/fetch.yaml
+          input: kube/hat.yaml
+          output: deploy/hat.yaml
 
       - name: Replace Environment Variables (FRONTEND)
         uses: danielr1996/envsubst-action@1.0.0

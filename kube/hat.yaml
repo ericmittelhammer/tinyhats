@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fetch-service
+  name: hat-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fetch-service
+      app: hat-service
   template:
     metadata:
       labels:
-        app: fetch-service
+        app: hat-service
     spec:
       containers:
-        - name: fetch-service
-          image: ${REGISTRY}/tinyhats_reinvent/fetch-service
+        - name: hat-service
+          image: ${REGISTRY}/tinyhats_reinvent/hat-service
           ports:
             - containerPort: 1337
           env:
@@ -35,10 +35,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fetch-service
+  name: hat-service
 spec:
   selector:
-    app: fetch-service
+    app: hat-service
   ports:
     - port: 80
       targetPort: 1337
