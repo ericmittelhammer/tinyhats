@@ -29,7 +29,7 @@ const PORT = 1337
 // https://stackoverflow.com/questions/28305120/differences-between-express-router-and-app-get
 
 app.use(function(req, res, next) {
-    logger.info("requested", req.url);
+    logger.info("requested", {url: req.url});
     next();
 })
 

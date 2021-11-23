@@ -38,7 +38,9 @@ router.post('/hatme', upload.any(), async (req, res) => {
     let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
     let params = baseUrl.searchParams;
     params.append('number', req.query.number == undefined ? 1 : req.query.number);
-    params.append('style', req.params.apiName)
+    if (req.query.style != undefined) {
+        params.append('style', req.query.style);
+    }
     let formData = new FormData()
     formData.append('file', req.files[0].buffer, {filename: "face", data: req.files[0].buffer})
     const formHeaders = formData.getHeaders();

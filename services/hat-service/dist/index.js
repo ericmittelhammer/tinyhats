@@ -35,7 +35,9 @@ const PORT = 1337; // for testing locally: node -r dotenv/config index.js
 // https://stackoverflow.com/questions/28305120/differences-between-express-router-and-app-get
 
 app.use(function (req, res, next) {
-  logger.info("requested", req.url);
+  logger.info("requested", {
+    url: req.url
+  });
   next();
 });
 app.use('/', router);
