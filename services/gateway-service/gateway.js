@@ -99,7 +99,9 @@ router.get('/', upload.any(), async (req, res) => {
     let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
     let params = baseUrl.searchParams;
     params.append('number', req.query.number == undefined ? 1 : req.query.number);
-    params.append('style', req.params.apiName) 
+    if (req.params.apiName != undefined){
+        params.append('style', req.params.apiName) 
+    }
     const addResp = await fetch(baseUrl.toString(), {
         method: 'GET',      
     });
