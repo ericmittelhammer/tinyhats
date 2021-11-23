@@ -6,7 +6,8 @@ var multer = require('multer');
 const upload = multer();
 var fetch = require('node-fetch');
 var dirname = require('path').dirname;
-var fileURLToPath = require('url').fileURLToPath;
+var url = require('url');
+var fileURLToPath = url.fileURLToPath;
 var FormData = require('form-data')
 
 // express is what helps us "route" the html pages. Usually on websites, you don't see /index.html. 
@@ -41,29 +42,29 @@ router.get('/admin', function (req, res) {
 });
 
 router.get('/api/hat', upload.any(), async function (req, res) {
-    let baseUrl = "http://gateway-service:80/hatme";
+    let baseUrl = new url.URL("http://gateway-service:80/hatme");
     const number = req.query.number ? req.query.number : "1";
     //console.log(req.body);
     let type = req.headers.type;
     //console.log(type);
 
     if (type) {
-        baseUrl += `/${type}`;
+        baseUrl.searchParams.append('style', type);
     }
 
-    baseUrl += `?number=${number}`;
+    baseUrl.searchParams.append('number', number);
 
 
     //console.log(baseUrl);
-    let resp = await fetch(baseUrl);
+    let resp = await fetch(baseUrl.toString());
     let data = await resp.json();
     //console.log(data);
     res.send(data);
 });
 
 router.post('/api/hat', upload.any(), async function (req, res) {
-    console.log("post data");
-    let baseUrl = "http://gateway-service:80/hatme";
+    console.log("posting custom photo");
+    let baseUrl = new url.URL("http://gateway-service:80/hatme");
     const number = req.query.number ? req.query.number : "1";
 
     let file = req.files[0].buffer;
@@ -71,7 +72,7 @@ router.post('/api/hat', upload.any(), async function (req, res) {
     let formData = await createForm(file);
     const formHeaders = await formData.getHeaders();
     let type = req.headers.type;
-    console.log(file);
+    //console.log(file);
     let options = {
         method: "POST",
         body: formData,
@@ -81,13 +82,14 @@ router.post('/api/hat', upload.any(), async function (req, res) {
     };
 
     if (type) {
-        baseUrl += `/${type}`;
+        baseUrl.searchParams.append('style', type);
     }
-    baseUrl += `?number=${number}`;
-    console.log(baseUrl);
+
+    baseUrl.searchParams.append('number', number);
+    console.log(`posting to ${baseUrl}`);
     let resp = await fetch(baseUrl, options);
     let data = await resp.json();
-    console.log(data);
+    //console.log(data);
     res.send(data);
 
 });
