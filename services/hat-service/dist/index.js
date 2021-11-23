@@ -76,7 +76,7 @@ router.get('/hatme', async (req, res, next) => {
   req.face = await (0, _helpers.defaultBoss)();
   await applyHats(req, res, next);
 });
-router.post('/hatme', upload.any(), async (req, res) => {
+router.post('/hatme', upload.any(), async (req, res, next) => {
   _newrelic.addCustomAttribute('qs', _url.parse(req.url).query);
 
   _newrelic.addCustomAttribute('customFace', true);
