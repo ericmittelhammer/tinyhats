@@ -101,16 +101,11 @@ router.post('/:apiName', upload.any(), async (req, res) => {
 })
 
 router.get('/', upload.any(), async (req, res) => {
-    let param = getNumber(req)
-    const addResp = await fetch(`http://${process.env.FETCH_ENDPOINT}/fetch?` + param, {
-        method: 'GET',      
+    res.send({
+        "service": "gateway-service",
+        "status": "ok"
     });
-
-    console.log("Fetching base64 image")
-
-    var result = await addResp.json()
-    res.send({result}) 
-})
+ })
 
 router.get('/:apiName', upload.any(), async (req, res) => {
     console.log(`[!] ${req.params.apiName} was accessed.`)
