@@ -84,7 +84,8 @@ router.post('/:apiName', upload.any(), async (req, res) => {
         var result = await addResp.json()
         console.log(`Received from /add: ${JSON.stringify(result)}`)
         res.send({result})
-    } 
+    }
+});
 
 
 router.get('/', upload.any(), async (req, res) => {
@@ -94,7 +95,7 @@ router.get('/', upload.any(), async (req, res) => {
     });
  })
 
- router.get('/hatme', upload.any(), async (req, res) => { {
+ router.get('/hatme', upload.any(), async (req, res) => {
     let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
     let params = baseUrl.searchParams;
     params.append('number', req.query.number == undefined ? 1 : req.query.number);
@@ -102,6 +103,7 @@ router.get('/', upload.any(), async (req, res) => {
     const addResp = await fetch(baseUrl.toString(), {
         method: 'GET',      
     });
+    
 
     console.log("Fetching base64 image")
     
@@ -109,7 +111,7 @@ router.get('/', upload.any(), async (req, res) => {
 
     var result = await addResp.json()
     res.status(responseCode).send({result}) 
-}
+})
 
 router.get('/:apiName', upload.any(), async (req, res) => {
     console.log(`[!] ${req.params.apiName} was accessed.`)
