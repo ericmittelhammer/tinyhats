@@ -39,7 +39,6 @@ router.get('/list', async (req, res) => {
 });
 
 async function applyHats(req, res, next) {
-  next();
   let numHats = 1;
 
   if (req.query.number != undefined) {
@@ -69,19 +68,19 @@ async function applyHats(req, res, next) {
   res.send(b64Result);
 }
 
-router.get('/hatme', applyHats, async (req, res, next) => {
+router.get('/hatme', async (req, res, next) => {
   _newrelic.addCustomAttribute('qs', req.query);
 
   _newrelic.addCustomAttribute('customFace', false);
 
   req.face = await (0, _helpers.defaultBoss)();
-  next();
+  applyHats(req, res, next);
 });
-router.post('/hatme', [upload.any(), applyHats], async (req, res) => {
+router.post('/hatme', upload.any(), async (req, res) => {
   _newrelic.addCustomAttribute('qs', req.query);
 
   _newrelic.addCustomAttribute('customFace', true);
 
   req.face = req.files[0].buffer;
-  next();
+  applyHats(res, req, next);
 });
