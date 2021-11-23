@@ -56,13 +56,13 @@ async function applyHats(req, res, next) {
     res.send(b64Result)
 }
 
-router.get('/hatme', numHats, async(req, res, next) => {
+router.get('/hatme', applyHats, async(req, res, next) => {
     newrelic.addCustomAttribute('customFace', false);
     req.face = await defaultBoss()
     next();
 });
 
-router.post('/hatme', upload.any(), async(req, res) => {
+router.post('/hatme', [upload.any(), applyHats], async(req, res) => {
     newrelic.addCustomAttribute('customFace', true);
     req.face = req.files[0].buffer
     next();
