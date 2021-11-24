@@ -10,7 +10,7 @@ RUN npm i canvas
 RUN npm i @tensorflow/tfjs-core@1.7.0
 RUN npm i @tensorflow/tfjs-node@1.7.0
 COPY . .
-CMD [ "node", "index.js" ]
+CMD [ "node", "--enable-source-maps", "index.js" ]
 
 # docker build -t manipulate .
 # docker run --env-file ./.env -p 80:80 manipulate

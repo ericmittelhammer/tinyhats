@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 COPY package.json ./
 RUN npm install
 COPY . .
-CMD [ "node", "-r", "newrelic", "index.js" ]
+CMD [ "node", "--enable-source-maps", "-r", "newrelic", "index.js" ]
 
 # docker build -t manipulate .
 # docker run --env-file ./.env -p 80:80 manipulate
