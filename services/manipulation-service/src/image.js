@@ -3,6 +3,23 @@ const faceapi = require('face-api.js')
 const canvas = require('canvas')
 require('@tensorflow/tfjs-node');
 
+
+const winston = require('winston');
+const newrelicFormatter = require('@newrelic/winston-enricher');
+
+
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
+        newrelicFormatter(),
+        winston.format.json()
+    )
+  });
+
 const { Canvas, Image, ImageData } = canvas  
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
@@ -12,13 +29,13 @@ const findBaby = async (baby) => {
   // const Canvas = canvas.createCanvas(image.width, image.height)
   // const ctx = Canvas.getContext('2d')
   // ctx.drawImage(image, 0, 0, image.width, image.height)
-  // console.log(ctx)
+  // logger.info(ctx)
 
   const fullFaceDescription = await faceapi.detectAllFaces(image)
   // use await to retrieve face data
 
   let relData = fullFaceDescription[0]._box
-  console.log(`Detected faces: ${JSON.stringify(relData)}`)
+  logger.info(`Detected faces: ${JSON.stringify(relData)}`)
 
   return relData;
   // {"_x":225.59293228387833,"_y":122.78662695563085,"_width":183.89773482084274,"_height":181.8649869230835}
@@ -33,7 +50,7 @@ const overlayHat = async (hat, result, baby, translate, rotate) => {
   let height = result._height
   let left = result._x
   let top = result._y
-  console.log(width, height, left, top)
+  logger.info(width, height, left, top)
   //  BoundingBox.Width:      ${data.BoundingBox.Width}`)
 
   hatImg = await hatImg.resize(width, height)

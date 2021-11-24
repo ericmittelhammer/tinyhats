@@ -7,6 +7,22 @@ const image = require('./src/image.js')
 var router = express.Router();
 const PORT = 80
 
+const winston = require('winston');
+const newrelicFormatter = require('@newrelic/winston-enricher');
+
+
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
+        newrelicFormatter(),
+        winston.format.json()
+    )
+  });
+
 // for testing locally: node -r dotenv/config index.js  
 // https://stackoverflow.com/questions/28305120/differences-between-express-router-and-app-get
 
@@ -14,12 +30,12 @@ const PORT = 80
 app.use('/', router)
 
 app.listen(PORT, () => {
-    console.log(`API Gateway started on port ${PORT}`)
+    logger.info(`API Gateway started on port ${PORT}`)
 })
 
 router.post('/manipulate', upload.any(), async(req, res) => {
     var result;
-    console.log(req.files)
+    logger.info(req.files)
     let baby = req.files[0].buffer
     let hat = req.files[1].buffer
     let rotate = parseInt(req.query.rotate)
@@ -27,11 +43,11 @@ router.post('/manipulate', upload.any(), async(req, res) => {
 
     try {
         // send to AWS SDK
-        console.log(baby)
+        logger.info(baby)
         result = await image.findBaby(baby)
     } catch (e) {
         res.send("Invalid image")
-        console.log(e)
+        logger.info(e)
     }
 
     let finalBaby = await image.overlayHat(hat, result, baby, translate, rotate)
