@@ -18,10 +18,12 @@
     },
     "homepage": "https://github.com/CyberCatamounts/cyber-catamounts-website#readme",
     "dependencies": {
+        "@newrelic/winston-enricher": "^2.1.0",
         "express": "^4.17.1",
         "form-data": "^4.0.0",
         "multer": "^1.4.3",
         "newrelic": "^8.6.0",
-        "node-fetch": "^2.0.0"
+        "node-fetch": "^2.0.0",
+        "winston": "^3.3.3"
     }
 }

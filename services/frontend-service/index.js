@@ -10,6 +10,22 @@ var url = require('url');
 var fileURLToPath = url.fileURLToPath;
 var FormData = require('form-data')
 
+const winston = require('winston');
+const newrelicFormatter = require('@newrelic/winston-enricher');
+
+
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
+        newrelicFormatter(),
+        winston.format.json()
+    )
+  });
+
 // express is what helps us "route" the html pages. Usually on websites, you don't see /index.html. 
 // Why? Because they use routing! When you navigate to /about, the web server with THIS code returns the HTML about.html page.
 
@@ -44,9 +60,9 @@ router.get('/admin', function (req, res) {
 router.get('/api/hat', upload.any(), async function (req, res) {
     let baseUrl = new url.URL("http://gateway-service:80/hatme");
     const number = req.query.number ? req.query.number : "1";
-    //console.log(req.body);
+    //logger.info(req.body);
     let type = req.headers.type;
-    //console.log(type);
+    //logger.info(type);
 
     if (type) {
         baseUrl.searchParams.append('style', type);
@@ -55,15 +71,15 @@ router.get('/api/hat', upload.any(), async function (req, res) {
     baseUrl.searchParams.append('number', number);
 
 
-    //console.log(baseUrl);
+    //logger.info(baseUrl);
     let resp = await fetch(baseUrl.toString());
     let data = await resp.json();
-    //console.log(data);
+    //logger.info(data);
     res.send(data);
 });
 
 router.post('/api/hat', upload.any(), async function (req, res) {
-    console.log("posting custom photo");
+    logger.info("posting custom photo");
     let baseUrl = new url.URL("http://gateway-service:80/hatme");
     const number = req.query.number ? req.query.number : "1";
 
@@ -72,7 +88,7 @@ router.post('/api/hat', upload.any(), async function (req, res) {
     let formData = await createForm(file);
     const formHeaders = await formData.getHeaders();
     let type = req.headers.type;
-    //console.log(file);
+    //logger.info(file);
     let options = {
         method: "POST",
         body: formData,
@@ -86,10 +102,10 @@ router.post('/api/hat', upload.any(), async function (req, res) {
     }
 
     baseUrl.searchParams.append('number', number);
-    console.log(`posting to ${baseUrl}`);
+    logger.info(`posting to ${baseUrl}`);
     let resp = await fetch(baseUrl, options);
     let data = await resp.json();
-    //console.log(data);
+    //logger.info(data);
     res.send(data);
 
 });
@@ -97,7 +113,7 @@ router.post('/api/hat', upload.any(), async function (req, res) {
 async function createForm(file) {
     let formData = new FormData()
     formData.append('file', file, { filename: "file", data: file })
-    console.log("Posting to Manipulate")
+    logger.info("Posting to Manipulate")
 
     return formData
 }
@@ -107,7 +123,7 @@ router.get('/api/list', async function (req, res) {
 
     const resp = await fetch(baseUrl);
     const data = await resp.json();
-    console.log(data);
+    logger.info(data);
     res.send(data);
 });
 
@@ -127,10 +143,10 @@ router.get('/api/admin/moderate', async function (req, res) {
 
     let resp = await fetch(baseUrl);
     let data = await resp.json();
-    console.log(data);
+    logger.info(data);
     res.send(data);
 
 });
 
 app.listen(process.env.PORT || 3000,
-    () => console.log("Server is running..."));
+    () => logger.info("Server is running..."));
