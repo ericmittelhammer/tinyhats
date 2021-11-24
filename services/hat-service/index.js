@@ -7,7 +7,6 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 
 winston.loggers.add('appLogger', {
     level: 'info',
-    defaultMeta: { service: 'hat-service' },
     transports: [
       new winston.transports.Console()
     ],
@@ -62,11 +61,9 @@ async function applyHats(req, res, next) {
     if (req.query.style == undefined) {
         newrelic.addCustomAttribute('random', true);
         hat = await getRandomHat()
-        newrelic.addCustomAttribute('style', hat.description);
     } else {
         newrelic.addCustomAttribute('random', false);
         hat = await getSpecificHat(req.query.style);
-        newrelic.addCustomAttribute('style', hat.description);
     }    
     if (hat == null) {
         logger.info(`Coudln't find hat style ${req.query.style}`)

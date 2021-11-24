@@ -16,9 +16,6 @@ var _helpers = require("./src/helpers.js");
 
 _winston.loggers.add('appLogger', {
   level: 'info',
-  defaultMeta: {
-    service: 'hat-service'
-  },
   transports: [new _winston.transports.Console()],
   format: _winston.format.combine(_winston.format.json(), _winstonEnricher())
 });
@@ -72,14 +69,10 @@ async function applyHats(req, res, next) {
     _newrelic.addCustomAttribute('random', true);
 
     hat = await (0, _helpers.getRandomHat)();
-
-    _newrelic.addCustomAttribute('style', hat.description);
   } else {
     _newrelic.addCustomAttribute('random', false);
 
     hat = await (0, _helpers.getSpecificHat)(req.query.style);
-
-    _newrelic.addCustomAttribute('style', hat.description);
   }
 
   if (hat == null) {
