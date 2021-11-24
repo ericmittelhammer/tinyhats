@@ -12,8 +12,12 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 
 const logger = winston.createLogger({
     level: 'info',
+    exitOnError: false,
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({
+        handleExceptions: true,
+        handleRejections: true
+      })
     ],
     format: winston.format.combine(
         winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
@@ -33,7 +37,7 @@ app.listen(PORT, () => {
 })
 
 router.post('/upload', upload.any(), async(req, res) => {
-    logger.info("Started")
+    logger.info("Starting upload")
     let image = req.files[0].buffer
     let name = req.body.name.toLowerCase();
     let fileName = uniqueId()
@@ -44,7 +48,6 @@ router.post('/upload', upload.any(), async(req, res) => {
     let ext = fileExt(req.body.mimeType)
 
     // base64 image to binary data
-    logger.info("Image received")
     let imageData = Buffer.from(image, 'base64')
 
     // upload to s3

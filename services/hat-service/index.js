@@ -7,8 +7,12 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 
 const logger = winston.createLogger({
     level: 'info',
+    exitOnError: false,
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({
+        handleExceptions: true,
+        handleRejections: true
+      })
     ],
     format: winston.format.combine(
         winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
@@ -28,7 +32,7 @@ const PORT = 1337
 // https://stackoverflow.com/questions/28305120/differences-between-express-router-and-app-get
 
 app.use(function(req, res, next) {
-    logger.info("requested", {url: req.url});
+    logger.info(`requested: ${req.url}`);
     next();
 })
 
@@ -43,7 +47,7 @@ async function numHats(req, res, next) {
     next();
 }
 
-router.get('/list', async(req, res) => {
+router.get('/list', async function list(req, res) {
     logger.info("Getting hats")
     let data = await getHatData()
     logger.info(`fetched ${data.length} hats`);
@@ -66,17 +70,18 @@ async function applyHats(req, res, next) {
         hat = await getSpecificHat(req.query.style);
     }    
     if (hat == null) {
-        logger.info(`Coudln't find hat style ${req.query.style}`)
+        logger.info(`Hat style ${req.query.style} does not exist`)
         return res.status(400).send({
             message: 'This hat style does not exist! If you want this style - try submitting it'
          });             
     }
-    logger.info(`Got hat ${req.query.style}`);
+    logger.info(`Going to apply ${numHats} ${req.query.style} hat(s) to image`);
+
     let b64Result = await requestManipulate(req.face, hat, numHats)
     res.send(b64Result)
 }
 
-router.get('/hatme', async(req, res, next) => {
+router.get('/hatme', async function hatmeGet(req, res, next) {
     let qs = url.parse(req.url).query;
     newrelic.addCustomAttribute('qs', qs);
     newrelic.addCustomAttribute('customFace', false);
@@ -84,7 +89,7 @@ router.get('/hatme', async(req, res, next) => {
     await applyHats(req, res, next);
 });
 
-router.post('/hatme', upload.any(), async(req, res, next) => {
+router.post('/hatme', upload.any(), async function hatmePost(req, res, next) {
     let qs = url.parse(req.url).query;
     newrelic.addCustomAttribute('qs', qs);
     newrelic.addCustomAttribute('customFace', true);

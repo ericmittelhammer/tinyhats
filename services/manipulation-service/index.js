@@ -13,8 +13,12 @@ const newrelicFormatter = require('@newrelic/winston-enricher');
 
 const logger = winston.createLogger({
     level: 'info',
+    exitOnError: false,
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({
+        handleExceptions: true,
+        handleRejections: true
+      })
     ],
     format: winston.format.combine(
         winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
@@ -30,12 +34,12 @@ const logger = winston.createLogger({
 app.use('/', router)
 
 app.listen(PORT, () => {
-    logger.info(`API Gateway started on port ${PORT}`)
+    logger.info(`Manipulaton service started on port ${PORT}`)
 })
 
-router.post('/manipulate', upload.any(), async(req, res) => {
+router.post('/manipulate', upload.any(), async function manipulate(req, res) {
     var result;
-    logger.info(req.files)
+    logger.info(`Request received. beginning manipulation`);
     let baby = req.files[0].buffer
     let hat = req.files[1].buffer
     let rotate = parseInt(req.query.rotate)
@@ -43,11 +47,11 @@ router.post('/manipulate', upload.any(), async(req, res) => {
 
     try {
         // send to AWS SDK
-        logger.info(baby)
+        //logger.info(baby)
         result = await image.findBaby(baby)
     } catch (e) {
         res.send("Invalid image")
-        logger.info(e)
+        logger.error(e)
     }
 
     let finalBaby = await image.overlayHat(hat, result, baby, translate, rotate)

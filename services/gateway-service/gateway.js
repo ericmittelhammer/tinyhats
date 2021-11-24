@@ -15,8 +15,12 @@ const newrelicFormatter = require('@newrelic/winston-enricher');
 
 const logger = winston.createLogger({
     level: 'info',
+    exitOnError: false,
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({
+          handleExceptions: true,
+          handleRejections: true
+      })
     ],
     format: winston.format.combine(
         winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
@@ -58,6 +62,7 @@ router.post('/hatme', upload.any(), async (req, res) => {
     let formData = new FormData()
     formData.append('file', req.files[0].buffer, {filename: "face", data: req.files[0].buffer})
     const formHeaders = formData.getHeaders();
+    logger.info(`POST ${baseUrl.toString()}`);
     const fetchResp = await fetch(baseUrl.toString(), {
         method: 'POST',
         body: formData,
@@ -65,9 +70,6 @@ router.post('/hatme', upload.any(), async (req, res) => {
         ...formHeaders,
         },  
     });
-
-    logger.info("Fetching base64 image")
-
     var result = await fetchResp.json()
     res.send({result}) 
 });
@@ -118,6 +120,7 @@ router.get('/', upload.any(), async (req, res) => {
     if (req.query.style != undefined) {
         params.append('style', req.query.style);
     }
+    logger.info(`GET ${baseUrl.toString()}`);
     const addResp = await fetch(baseUrl.toString(), {
         method: 'GET',      
     });
@@ -159,12 +162,10 @@ router.get('/api/:apiName', upload.any(), async (req, res) => {
     let route = req.params.apiName;
     
     if (route == "hats") {
+        logger.info(`POST ${baseUrl.toString()}`);
         const addResp = await fetch(`http://${process.env.HATS_ENDPOINT}/list`, {
             method: 'GET',      
         });
-
-        logger.info("Fetching hat list")
-
         var result = await addResp.json()
         res.send(result)
     }

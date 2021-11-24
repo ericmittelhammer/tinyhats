@@ -7,8 +7,12 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 
 const logger = winston.createLogger({
     level: 'info',
+    exitOnError: false,
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({
+        handleExceptions: true,
+        handleRejections: true
+      })
     ],
     format: winston.format.combine(
         winston.format((info, opts) => Object.assign(info, {module: __filename}))(),

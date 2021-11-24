@@ -8,8 +8,12 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 
 const logger = winston.createLogger({
     level: 'info',
+    exitOnError: false,
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({
+        handleExceptions: true,
+        handleRejections: true
+      })
     ],
     format: winston.format.combine(
         winston.format.label({ module: 'helpers.js' }),
@@ -104,15 +108,15 @@ export async function defaultBoss() {
 export async function requestManipulate(face, hat, numberHats) {
     // hit the upload endpoint to upload image and retrieve unique image id
     let faceData = face
-    logger.info("Start loop")
-    logger.info(numberHats)
     for (var i = numberHats; i >= 1; i--) {
-        logger.info(i)
+        logger.info(`Applying hat ${i} of ${numberHats}`)
         let translate = i*0.6
         let rotate = i*10
         let formData = await createForm(faceData, hat)
         const formHeaders = formData.getHeaders();
-        const manipulateRequest = await fetch(`http://${process.env.MANIPULATE_ENDPOINT}/manipulate?translate=${translate}&rotate=${rotate}`, {
+        const manUrl = `http://${process.env.MANIPULATE_ENDPOINT}/manipulate?translate=${translate}&rotate=${rotate}`;
+        logger.info(`POST ${manUrl}`)
+        const manipulateRequest = await fetch(manUrl, {
             method: 'POST',
             body: formData,
                 headers: {
@@ -128,7 +132,7 @@ export async function requestManipulate(face, hat, numberHats) {
             faceData = Buffer.from(b64Result.finalBaby.replace("data:image/png;base64,", ""), "base64");
         }
 
-        logger.info(`Received response from /manipulate [${i}]`)
+        logger.info(`Received response from /manipulate [hat ${i}]`)
     }
 
     return faceData
@@ -138,7 +142,6 @@ async function createForm(face, hat) {
     let formData = new FormData()
     formData.append('file', face, {filename: "face", data: face})
     formData.append('file', hat, {filename: "hat", data: hat})
-    logger.info("Posting to Manipulate")
 
     return formData
 }
