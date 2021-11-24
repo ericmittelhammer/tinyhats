@@ -23,12 +23,14 @@ var _formData = require("form-data");
 
 var _winston = require("winston");
 
+var _winstonEnricher = require("@newrelic/winston-enricher");
+
 const logger = _winston.createLogger({
   level: 'info',
   transports: [new _winston.transports.Console()],
   format: _winston.format.combine(_winston.format.label({
     module: 'helpers.js'
-  }), newrelicFormatter(), _winston.format.json())
+  }), _winstonEnricher(), _winston.format.json())
 });
 
 const HOST = process.env.HOST;

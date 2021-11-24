@@ -4,6 +4,7 @@ import mysql from 'mysql2'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 import winston from 'winston'
+import newrelicFormatter from '@newrelic/winston-enricher'
 
 const logger = winston.createLogger({
     level: 'info',
