@@ -2,6 +2,21 @@ import AWS from 'aws-sdk';
 import generateUniqueId from 'generate-unique-id'
 import mysql from 'mysql'
 
+import winston from 'winston'
+import newrelicFormatter from '@newrelic/winston-enricher'
+
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
+        newrelicFormatter(),
+        winston.format.json()
+    )
+  });
+
 const ID = process.env.S3_ID;
 const SECRET = process.env.S3_SECRET;
 const BUCKET_NAME = 'tinyhats';
@@ -37,7 +52,7 @@ export async function uploadFile(fileName, fileContent) {
             throw err;
         }
         link = data.Location
-        console.log(`File uploaded successfully. ${link}`);
+        logger.info(`File uploaded successfully. ${link}`);
     });
     return `https://${BUCKET_NAME}.s3.amazonaws.com/${key}`
 };
@@ -66,9 +81,9 @@ export const uniqueId = () => {
 export async function push2RDS(key, ext, name, link) {
     con.connect(function(err) {
         con.query(`INSERT INTO main.images (keyId, fileName, url, description, approve) VALUES ('${key}', '${key + ext}', '${link}', '${name}', 'false')`, function(err, result, fields) {
-            if (err) console.log(err);
-            if (result) console.log({key: key, fileName: key + ext, url: link, description: name, approve: "false"});
-            if (fields) console.log(fields);
+            if (err) logger.error(err);
+            if (result) logger.info({key: key, fileName: key + ext, url: link, description: name, approve: "false"});
+            if (fields) logger.info(fields);
         });
         // connect to mysql and push data
     });
