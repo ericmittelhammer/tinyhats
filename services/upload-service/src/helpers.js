@@ -7,16 +7,13 @@ import newrelicFormatter from '@newrelic/winston-enricher'
 
 const logger = winston.createLogger({
     level: 'info',
-    exitOnError: false,
     transports: [
-      new winston.transports.Console({
-        handleExceptions: true,
-        handleRejections: true
-      })
+      new winston.transports.Console()
     ],
     format: winston.format.combine(
         winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
         newrelicFormatter(),
+        winston.format.errors({stack: true}),
         winston.format.json()
     )
   });
