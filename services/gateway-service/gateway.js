@@ -10,6 +10,20 @@ const cors = require('cors')
 const app = express()
 var router = express.Router();
 const PORT = 4444
+const winston = require('winston');
+const newrelicFormatter = require('@newrelic/winston-enricher');
+
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        winston.format((info, opts) => Object.assign(info, {module: __filename}))(),
+        newrelicFormatter(),
+        winston.format.json()
+    )
+  });
 
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
@@ -18,7 +32,7 @@ const limiter = rateLimit({
 });
   
 //  apply to all requests
-app.use(limiter);
+//app.use(limiter);
 
 app.use(cors());
 
@@ -52,20 +66,20 @@ router.post('/hatme', upload.any(), async (req, res) => {
         },  
     });
 
-    console.log("Fetching base64 image")
+    logger.info("Fetching base64 image")
 
     var result = await fetchResp.json()
     res.send({result}) 
 });
 
 router.post('/:apiName', upload.any(), async (req, res) => {
-    console.log(`[!] ${req.params.apiName} was accessed.`)
+    logger.info(`[!] ${req.params.apiName} was accessed.`)
     let route = req.params.apiName
 
     if (route == "add") {
         let image = req.files[0].buffer
         let name = req.body.name
-        console.log("Requesting moderation and uploading image...")
+        logger.info("Requesting moderation and uploading image...")
     
         // hit the add endpoint to add image and begin approval process
         let formData = new FormData()
@@ -73,7 +87,7 @@ router.post('/:apiName', upload.any(), async (req, res) => {
         formData.append('name', name)
         const formHeaders = formData.getHeaders();
     
-        console.log(process.env.ADD_ENDPOINT)
+        logger.info(process.env.ADD_ENDPOINT)
         
         const addResp = await fetch(`http://${process.env.ADD_ENDPOINT}/add`, {
             method: 'POST',
@@ -84,7 +98,7 @@ router.post('/:apiName', upload.any(), async (req, res) => {
         });
     
         var result = await addResp.json()
-        console.log(`Received from /add: ${JSON.stringify(result)}`)
+        logger.info(`Received from /add: ${JSON.stringify(result)}`)
         res.send({result})
     }
 });
@@ -109,7 +123,7 @@ router.get('/', upload.any(), async (req, res) => {
     });
     
 
-    console.log("Fetching base64 image")
+    logger.info("Fetching base64 image")
     
     let responseCode = addResp.status
 
@@ -118,7 +132,7 @@ router.get('/', upload.any(), async (req, res) => {
 })
 
 router.get('/:apiName', upload.any(), async (req, res) => {
-    console.log(`[!] ${req.params.apiName} was accessed.`)
+    logger.info(`[!] ${req.params.apiName} was accessed.`)
 
     let route = req.params.apiName;
     if (route == "moderate") {
@@ -141,7 +155,7 @@ router.get('/:apiName', upload.any(), async (req, res) => {
 })
 
 router.get('/api/:apiName', upload.any(), async (req, res) => {
-    console.log(`[!] /api/${req.params.apiName} was accessed.`)
+    logger.info(`[!] /api/${req.params.apiName} was accessed.`)
     let route = req.params.apiName;
     
     if (route == "hats") {
@@ -149,7 +163,7 @@ router.get('/api/:apiName', upload.any(), async (req, res) => {
             method: 'GET',      
         });
 
-        console.log("Fetching hat list")
+        logger.info("Fetching hat list")
 
         var result = await addResp.json()
         res.send(result)
@@ -159,5 +173,5 @@ router.get('/api/:apiName', upload.any(), async (req, res) => {
 app.use('/', router)
 
 app.listen(PORT, () => {
-    console.log(`API Gateway started on port ${PORT}`)
+    logger.info(`API Gateway started on port ${PORT}`)
 })
