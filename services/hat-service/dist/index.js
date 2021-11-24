@@ -82,7 +82,7 @@ async function applyHats(req, res, next) {
     });
   }
 
-  logger.info(`Got hat ${req.query.hatstyle}`);
+  logger.info(`Got hat ${req.query.style}`);
   let b64Result = await (0, _helpers.requestManipulate)(req.face, hat, numHats);
   res.send(b64Result);
 }

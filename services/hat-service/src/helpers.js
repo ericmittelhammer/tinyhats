@@ -57,7 +57,7 @@ export async function getSpecificHat(style) {
     let randNum = Math.floor(Math.random() * hatList.length)
     let hat = hatList[randNum];
     let hatLink = hat.url
-    newrelic.addCustomAttribute('style', hat.description);
+    newrelic.addCustomAttribute('style', 'goop');
     logger.info(`hatLink: ${hatLink}`)
 
     let image = await downloadBuffer(hatLink)
