@@ -1,5 +1,6 @@
 require('newrelic');
 import express from 'express'
+import expressAsyncErrors from 'express-async-errors'
 import multer from 'multer'
 const upload = multer()
 const app = express()

@@ -1,5 +1,6 @@
 require('newrelic')
 var express = require('express');
+require('express-async-errors');
 var app = express();
 var router = express.Router();
 var multer = require('multer');

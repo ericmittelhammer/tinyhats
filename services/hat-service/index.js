@@ -1,5 +1,6 @@
 import newrelic from 'newrelic'
 import express from 'express'
+import expressAsyncErrors from 'express-async-errors'
 import multer from 'multer'
 import url from 'url'
 import winston from 'winston'

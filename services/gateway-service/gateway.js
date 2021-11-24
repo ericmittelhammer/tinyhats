@@ -7,6 +7,7 @@ const upload = multer()
 const fetch = require("node-fetch")
 const rateLimit = require("express-rate-limit");
 const cors = require('cors')
+require('express-async-errors');
 const app = express()
 var router = express.Router();
 const PORT = 4444
