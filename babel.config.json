@@ -1,8 +1,9 @@
 {
-    "plugins": [
-      ["@babel/plugin-transform-modules-commonjs", {
-        "importInterop": "node"
-      }],
-      "babel-plugin-transform-import-meta"
-    ]
+  "sourceMaps": "inline",
+  "plugins": [
+    ["@babel/plugin-transform-modules-commonjs", {
+      "importInterop": "node"
+    }],
+    "babel-plugin-transform-import-meta"
+  ]
   }
