@@ -26,15 +26,15 @@ jobs:
           - name: "Hat Service"
             context: services/hat-service
             repository: hat-service
-          # - name: "Manipulation Service"
-          #   context: services/manipulation-service
-          #   repository: manipulation-service
+          - name: "Manipulation Service"
+            context: services/manipulation-service
+            repository: manipulation-service
           # - name: "Moderate Service"
           #   context: services/moderate-service
           #   repository: moderate-service
-          # - name: "Upload Service"
-          #   context: services/upload-service
-          #   repository: upload-service
+          - name: "Upload Service"
+            context: services/upload-service
+            repository: upload-service
           # # - name: "Locust Service"
           #   context: services/locust-service
           #   repository: locust-service
@@ -169,16 +169,16 @@ jobs:
       #     input: kube/locust.yaml
       #     output: deploy/locust.yaml
 
-      # - name: Replace Environment Variables (MANIPULATION)  
-      #   uses: danielr1996/envsubst-action@1.0.0
-      #   env:
-      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
-      #     REPOSITORY_URL: git@github.com:${{ github.repository }}.git
-      #     COMMIT: ${{ github.sha }}
-      #   with:
-      #     input: kube/manipulation.yaml
-      #     output: deploy/manipulation.yaml
+      - name: Replace Environment Variables (MANIPULATION)  
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
+        with:
+          input: kube/manipulation.yaml
+          output: deploy/manipulation.yaml
 
       # - name: Replace Environment Variables (MODERATE)
       #   uses: danielr1996/envsubst-action@1.0.0
@@ -193,20 +193,20 @@ jobs:
       #     input: kube/moderate.yaml
       #     output: deploy/moderate.yaml
 
-      # - name: Replace Environment Variables (UPLOAD)
-      #   uses: danielr1996/envsubst-action@1.0.0
-      #   env:
-      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     HOST: ${{ secrets.HOST }}
-      #     PASSWORD: ${{ secrets.PASSWORD }}
-      #     S3_ID: ${{ secrets.S3_ID }}
-      #     S3_SECRET: ${{ secrets.S3_SECRET }}
-      #     NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
-      #     REPOSITORY_URL: git@github.com:${{ github.repository }}.git
-      #     COMMIT: ${{ github.sha }}
-      #   with:
-      #     input: kube/upload.yaml
-      #     output: deploy/upload.yaml
+      - name: Replace Environment Variables (UPLOAD)
+        uses: danielr1996/envsubst-action@1.0.0
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          HOST: ${{ secrets.HOST }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          S3_ID: ${{ secrets.S3_ID }}
+          S3_SECRET: ${{ secrets.S3_SECRET }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY}}
+          REPOSITORY_URL: git@github.com:${{ github.repository }}.git
+          COMMIT: ${{ github.sha }}
+        with:
+          input: kube/upload.yaml
+          output: deploy/upload.yaml
    
       - name: Apply Configuration Changes
         uses: bitprj/kubernetes-action@master
