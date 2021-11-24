@@ -49,7 +49,7 @@ router.post('/manipulate', upload.any(), async function manipulate(req, res) {
     try {
         // send to AWS SDK
         //logger.info(baby)
-        result = await image.findBaby(baby)
+        result = await image.findFace(baby)
     } catch (e) {
         res.send("Invalid image")
         logger.error(e)
