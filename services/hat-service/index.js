@@ -11,7 +11,7 @@ const logger = winston.createLogger({
       new winston.transports.Console()
     ],
     format: winston.format.combine(
-        label({ module: 'index.js' }),
+        winston.format.label({ module: 'index.js' }),
         newrelicFormatter(),
         winston.format.json()
     )

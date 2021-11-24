@@ -26,7 +26,7 @@ var _winston = require("winston");
 const logger = _winston.createLogger({
   level: 'info',
   transports: [new _winston.transports.Console()],
-  format: _winston.format.combine(label({
+  format: _winston.format.combine(_winston.format.label({
     module: 'helpers.js'
   }), newrelicFormatter(), _winston.format.json())
 });
