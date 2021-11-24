@@ -24,16 +24,19 @@ const logger = winston.createLogger({
 const HOST = process.env.HOST;
 const PASSWORD = process.env.PASSWORD;
 
-const con = mysql.createConnection({
+const pool = mysql.createPool({
     host: HOST,
     port: '3306',
     user: "admin",
     password: PASSWORD,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 3
 });
 
 export async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
-    const results = await con.promise().query(sql)
+    const results = await pool.promise().query(sql)
     return results
 };
 
@@ -49,7 +52,7 @@ export async function downloadBuffer(url) {
 
 export async function getSpecificHat(style) {
     var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
-    const results = await con.promise().query(sql)
+    const results = await pool.promise().query(sql)
         .catch(err => logger.error(err))
     //logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
     let hatList = results[0]
@@ -72,7 +75,7 @@ export async function getSpecificHat(style) {
 
 export async function getHatData() {
     var sql = `SELECT description, url FROM main.images WHERE approve='true'`;
-    const results = await con.promise().query(sql)
+    const results = await pool.promise().query(sql)
     //logger.info(`gethatdata results: ${results}`);
     let hatList = results[0]
     //logger.info(hatList)
