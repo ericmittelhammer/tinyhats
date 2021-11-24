@@ -9,6 +9,8 @@ hats = [ 'baby', 'bucket', 'Beach', 'spinner', 'cartoon', 'skull', 'Blob', 'sant
 def index(l):
     l.client.get("/")
 
+def listHats(l):
+    l.client.get("/list")
 
 def browseProduct(l):
     l.client.get("/hatme?style=" + random.choice(hats))
@@ -19,6 +21,7 @@ class UserBehavior(TaskSet):
         index(self)
 
     tasks = {index: 1,
+        listHats: 4,
         browseProduct: 20,
     }
 
