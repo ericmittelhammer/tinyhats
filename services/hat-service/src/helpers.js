@@ -5,8 +5,17 @@ import fetch from 'node-fetch'
 import FormData from 'form-data'
 import winston from 'winston'
 
-const logger = winston.loggers.get('appLogger');
-
+const logger = winston.createLogger({
+    level: 'info',
+    transports: [
+      new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        label({ module: 'helpers.js' }),
+        newrelicFormatter(),
+        winston.format.json()
+    )
+  });
 const HOST = process.env.HOST;
 const PASSWORD = process.env.PASSWORD;
 
@@ -20,7 +29,6 @@ const con = mysql.createConnection({
 export async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
     const results = await con.promise().query(sql)
-    logger.info(`listpictures results: ${JSON.stringify(results)}`);
     return results
 };
 
@@ -38,9 +46,9 @@ export async function getSpecificHat(style) {
     var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
     const results = await con.promise().query(sql)
         .catch(err => logger.error(err))
-    logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
+    //logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
     let hatList = results[0]
-    logger.info(`hatList: ${JSON.stringify(hatList)}`)
+    //logger.info(`hatList: ${JSON.stringify(hatList)}`)
     if (hatList.length == 0){
         return null
     }
@@ -60,7 +68,7 @@ export async function getSpecificHat(style) {
 export async function getHatData() {
     var sql = `SELECT description, url FROM main.images WHERE approve='true'`;
     const results = await con.promise().query(sql)
-    logger.info(`gethatdata results: ${results}`);
+    //logger.info(`gethatdata results: ${results}`);
     let hatList = results[0]
     //logger.info(hatList)
 
@@ -71,7 +79,7 @@ export async function getRandomHat() {
     // get random hat picture
     let hats = await listPictures()
     let hatList = hats[0]
-    logger.info(`getRandomHat hatlistL ${hatList}`);
+    //logger.info(`getRandomHat hatlistL ${hatList}`);
 
     let randNum = Math.floor(Math.random() * hatList.length)
     let hat = hatList[randNum];

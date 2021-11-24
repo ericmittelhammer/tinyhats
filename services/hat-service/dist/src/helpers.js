@@ -23,7 +23,13 @@ var _formData = require("form-data");
 
 var _winston = require("winston");
 
-const logger = _winston.loggers.get('appLogger');
+const logger = _winston.createLogger({
+  level: 'info',
+  transports: [new _winston.transports.Console()],
+  format: _winston.format.combine(label({
+    module: 'helpers.js'
+  }), newrelicFormatter(), _winston.format.json())
+});
 
 const HOST = process.env.HOST;
 const PASSWORD = process.env.PASSWORD;
@@ -38,7 +44,6 @@ const con = _mysql.createConnection({
 async function listPictures() {
   var sql = "SELECT * FROM main.images WHERE approve='true'";
   const results = await con.promise().query(sql);
-  logger.info(`listpictures results: ${JSON.stringify(results)}`);
   return results;
 }
 
@@ -55,10 +60,9 @@ async function downloadBuffer(url) {
 
 async function getSpecificHat(style) {
   var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
-  const results = await con.promise().query(sql).catch(err => logger.error(err));
-  logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
-  let hatList = results[0];
-  logger.info(`hatList: ${JSON.stringify(hatList)}`);
+  const results = await con.promise().query(sql).catch(err => logger.error(err)); //logger.info(`getSpecificHat results: ${JSON.stringify(results)}`);
+
+  let hatList = results[0]; //logger.info(`hatList: ${JSON.stringify(hatList)}`)
 
   if (hatList.length == 0) {
     return null;
@@ -78,8 +82,8 @@ async function getSpecificHat(style) {
 
 async function getHatData() {
   var sql = `SELECT description, url FROM main.images WHERE approve='true'`;
-  const results = await con.promise().query(sql);
-  logger.info(`gethatdata results: ${results}`);
+  const results = await con.promise().query(sql); //logger.info(`gethatdata results: ${results}`);
+
   let hatList = results[0]; //logger.info(hatList)
 
   return hatList;
@@ -88,8 +92,8 @@ async function getHatData() {
 async function getRandomHat() {
   // get random hat picture
   let hats = await listPictures();
-  let hatList = hats[0];
-  logger.info(`getRandomHat hatlistL ${hatList}`);
+  let hatList = hats[0]; //logger.info(`getRandomHat hatlistL ${hatList}`);
+
   let randNum = Math.floor(Math.random() * hatList.length);
   let hat = hatList[randNum];
   let hatLink = hat.url;

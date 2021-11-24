@@ -5,18 +5,18 @@ import url from 'url'
 import winston from 'winston'
 import newrelicFormatter from '@newrelic/winston-enricher'
 
-winston.loggers.add('appLogger', {
+const logger = winston.createLogger({
     level: 'info',
     transports: [
       new winston.transports.Console()
     ],
     format: winston.format.combine(
-        winston.format.json(),
-        newrelicFormatter()
+        label({ module: 'index.js' }),
+        newrelicFormatter(),
+        winston.format.json()
     )
   });
 
-const logger = winston.loggers.get('appLogger');
 
 import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData } from './src/helpers.js'
 const upload = multer()

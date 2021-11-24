@@ -14,13 +14,13 @@ var _winstonEnricher = require("@newrelic/winston-enricher");
 
 var _helpers = require("./src/helpers.js");
 
-_winston.loggers.add('appLogger', {
+const logger = _winston.createLogger({
   level: 'info',
   transports: [new _winston.transports.Console()],
-  format: _winston.format.combine(_winston.format.json(), _winstonEnricher())
+  format: _winston.format.combine(label({
+    module: 'index.js'
+  }), _winstonEnricher(), _winston.format.json())
 });
-
-const logger = _winston.loggers.get('appLogger');
 
 const upload = _multer();
 
