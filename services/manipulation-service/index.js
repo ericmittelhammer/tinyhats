@@ -48,8 +48,8 @@ router.post('/manipulate', upload.any(), async function manipulate(req, res) {
         //logger.info(baby)
         result = await image.findFace(baby)
     } catch (e) {
-        res.send("Invalid image")
-        logger.error(e)
+        logger.error(`Unable to find face: ${e.getMessage()}`)
+        throw(e);
     }
 
     let finalBaby = await image.overlayHat(hat, result, baby, translate, rotate)

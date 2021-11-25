@@ -33,7 +33,9 @@ const findFace = async function findFace(baby) {
   // ctx.drawImage(image, 0, 0, image.width, image.height)
   // logger.info(ctx)
 
-  const fullFaceDescription = await newrelic.startSegment('faceapi.detectAllFaces', true, faceapi.detectAllFaces(image))
+  const fullFaceDescription = await newrelic.startSegment('faceapi.detectAllFaces', true, async () => {
+    await faceapi.detectAllFaces(image)
+  });
   // use await to retrieve face data
 
   let relData = fullFaceDescription[0]._box
