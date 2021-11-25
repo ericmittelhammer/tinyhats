@@ -61,7 +61,7 @@ const overlayHat = async function overlayHat(hat, result, baby, translate, rotat
   hatImg = await hatImg.rotate(rotate)
 
   translate = translate * 0.3
-  nr.startSegment('image.composite', true, function() {
+  newrelic.startSegment('image.composite', true, function() {
     image.composite(hatImg, left - width*translate, top - height*1.2, {
       mode: Jimp.BLEND_SOURCE_OVER,
       opacityDest: 1,
