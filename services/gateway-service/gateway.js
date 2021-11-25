@@ -50,7 +50,7 @@ function getNumber(req) {
     return param
 }
 
-router.post('/hatme', upload.any(), async (req, res) => { 
+router.post('/hatme', upload.any(), async function hatemePost(req, res) { 
     let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
     let params = baseUrl.searchParams;
     params.append('number', req.query.number == undefined ? 1 : req.query.number);
@@ -111,7 +111,7 @@ router.get('/', upload.any(), async (req, res) => {
     });
  })
 
- router.get('/hatme', upload.any(), async (req, res) => {
+ router.get('/hatme', upload.any(), async function hatmeGet(req, res) {
     let baseUrl = new url.URL(`http://${process.env.HATS_ENDPOINT}/hatme`);
     let params = baseUrl.searchParams;
     params.append('number', req.query.number == undefined ? 1 : req.query.number);
@@ -122,9 +122,6 @@ router.get('/', upload.any(), async (req, res) => {
     const addResp = await fetch(baseUrl.toString(), {
         method: 'GET',      
     });
-    
-
-    logger.info("Fetching base64 image")
     
     let responseCode = addResp.status
 
