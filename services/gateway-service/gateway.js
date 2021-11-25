@@ -157,7 +157,7 @@ router.get('/api/:apiName', upload.any(), async (req, res) => {
     let route = req.params.apiName;
     
     if (route == "hats") {
-        logger.info(`POST ${baseUrl.toString()}`);
+        logger.info(`POST http://${process.env.HATS_ENDPOINT}/list`);
         const addResp = await fetch(`http://${process.env.HATS_ENDPOINT}/list`, {
             method: 'GET',      
         });
