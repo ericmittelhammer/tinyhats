@@ -4,7 +4,7 @@ COPY package.json ./
 RUN sed -i '/\s*"type":\W*"module"/d' ./package.json
 RUN npm install
 COPY dist .
-CMD [ "node", "--enable-source-maps", "--experimental-modules", "index.js" ]
+CMD [ "node", "--enable-source-maps", "--experimental-modules", "upload-index.js" ]
 
 # docker build -t upload .
 # docker run --env-file ./.env -p 80:80 upload
