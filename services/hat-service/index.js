@@ -73,7 +73,7 @@ async function applyHats(req, res, next) {
             message: 'This hat style does not exist! If you want this style - try submitting it'
          });             
     }
-    logger.info(`Going to apply ${numHats} ${req.query.style} hat(s) to image`);
+    logger.info(`Going to apply ${numHats} ${req.query.style} hats to image`);
 
     let b64Result = await requestManipulate(req.face, hat, numHats)
     res.send(b64Result)

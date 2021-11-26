@@ -4,7 +4,7 @@ from locust import HttpUser, TaskSet, between
 # generate this with:
 # awk 'BEGIN {ORS=" "; print "[" } /.*INSERT INTO/ { print $9 } END { print "]"}' ../../kube/mysql-deployment.yaml
 
-hats = [ 'baby', 'bucket', 'Beach', 'spinner', 'cartoon', 'skull', 'Blob', 'santa', 'St-Patricks', 'santa', 'graduation', 'blob', 'pirate', 'pokemon', 'clown', 'Spy', 'st-patricks', 'Mario', 'tophat', 'pilot', 'tophat', 'construction', 'Beach', 'turkey', 'st-patricks', 'Shark', 'Alien', 'penguin', 'tinyhat', 'cat-ears', 'spicy', 'food' ]
+hats = [ 'bucket', 'spinner', 'skull', 'Santa', 'graduation', 'pirate', 'pokemon', 'clown', 'Spy', 'Mario', 'tophat', 'construction', 'Beach', 'turkey', 'Shark', 'Alien', 'tinyhat', 'cat-ears' ]
 
 def index(l):
     l.client.get("/")
