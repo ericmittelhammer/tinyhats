@@ -70,8 +70,8 @@ async function applyHats(req, res, next) {
         hat = await getSpecificHat(sanitizedHatStyle);
     }    
     if (hat == null) {
-        logger.info(`Hat style ${req.query.style} does not exist`)
-        throw new Error(`Hat style ${req.query.style} does not exist`);
+        logger.info(`Invalid hat style`)
+        throw new Error(`Invalid hat style`);
 
     }
     logger.info(`Going to apply ${numHats} ${req.query.style} hats to image`);
