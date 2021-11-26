@@ -82,7 +82,7 @@ async function applyHats(req, res, next) {
 
 router.get('/hatme', async function hatmeGet(req, res, next) {
     let qs = url.parse(req.url).query;
-    newrelic.addCustomAttribute('requestedStyle', qs.style);
+    newrelic.addCustomAttribute('requestedStyle', req.query.style);
     newrelic.addCustomAttribute('customFace', false);
     req.face = await defaultBoss()
     await applyHats(req, res, next);
@@ -90,7 +90,7 @@ router.get('/hatme', async function hatmeGet(req, res, next) {
 
 router.post('/hatme', upload.any(), async function hatmePost(req, res, next) {
     let qs = url.parse(req.url).query;
-    newrelic.addCustomAttribute('requestedStyle', qs.style);
+    newrelic.addCustomAttribute('requestedStyle', req.query.style);
     newrelic.addCustomAttribute('customFace', true);
     req.face = req.files[0].buffer
     await applyHats(req, res, next);
