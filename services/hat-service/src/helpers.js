@@ -61,7 +61,7 @@ export async function getSpecificHat(style) {
     let randNum = Math.floor(Math.random() * hatList.length)
     let hat = hatList[randNum];
     let hatLink = hat.url
-    newrelic.addCustomAttribute('style', hat.description);
+    newrelic.addCustomAttribute('returnedStyle', hat.description);
     logger.info(`hatLink: ${hatLink}`)
 
     let image = await downloadBuffer(hatLink)
@@ -89,7 +89,7 @@ export async function getRandomHat() {
     let randNum = Math.floor(Math.random() * hatList.length)
     let hat = hatList[randNum];
     let hatLink = hat.url;
-    newrelic.addCustomAttribute('style', hat.description);
+    newrelic.addCustomAttribute('returnedStyle', hat.description);
     logger.info(`getRandomHat hatLink ${hatLink}`);
 
     let image = await downloadBuffer(hatLink)

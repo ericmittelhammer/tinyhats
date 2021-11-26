@@ -59,19 +59,20 @@ async function applyHats(req, res, next) {
         numHats = req.query.number 
     }
     
+    let sanitizedHatStyle = req.query.style.toLower();
+
     let hat = null;
     if (req.query.style == undefined) {
         newrelic.addCustomAttribute('random', true);
         hat = await getRandomHat()
     } else {
         newrelic.addCustomAttribute('random', false);
-        hat = await getSpecificHat(req.query.style);
+        hat = await getSpecificHat(sanitizedHatStyle);
     }    
     if (hat == null) {
         logger.info(`Hat style ${req.query.style} does not exist`)
-        return res.status(400).send({
-            message: 'This hat style does not exist! If you want this style - try submitting it'
-         });             
+        throw new Error(`Hat style ${req.query.style} does not exist`);
+
     }
     logger.info(`Going to apply ${numHats} ${req.query.style} hats to image`);
 
@@ -81,7 +82,7 @@ async function applyHats(req, res, next) {
 
 router.get('/hatme', async function hatmeGet(req, res, next) {
     let qs = url.parse(req.url).query;
-    newrelic.addCustomAttribute('qs', qs);
+    newrelic.addCustomAttribute('requestedStyle', qs.style);
     newrelic.addCustomAttribute('customFace', false);
     req.face = await defaultBoss()
     await applyHats(req, res, next);
@@ -89,7 +90,7 @@ router.get('/hatme', async function hatmeGet(req, res, next) {
 
 router.post('/hatme', upload.any(), async function hatmePost(req, res, next) {
     let qs = url.parse(req.url).query;
-    newrelic.addCustomAttribute('qs', qs);
+    newrelic.addCustomAttribute('requestedStyle', qs.style);
     newrelic.addCustomAttribute('customFace', true);
     req.face = req.files[0].buffer
     await applyHats(req, res, next);
