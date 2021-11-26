@@ -59,7 +59,7 @@ async function applyHats(req, res, next) {
         numHats = req.query.number 
     }
     
-    let sanitizedHatStyle = req.query.style.toLower();
+    let sanitizedHatStyle = req.query.style.toLowerCase();
 
     let hat = null;
     if (req.query.style == undefined) {
