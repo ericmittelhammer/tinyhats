@@ -1,5 +1,5 @@
 FROM node:12-slim
-WORKDIR /usr/src/app
+WORKDIR /usr/src/gateway-service
 COPY . .
 RUN npm install
 CMD [ "node", "--enable-source-maps", "gateway.js" ]

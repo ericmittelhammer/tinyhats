@@ -1,5 +1,5 @@
 FROM node:12-slim
-WORKDIR /usr/src/app
+WORKDIR /usr/src/frontend-service
 COPY package.json ./
 RUN npm install
 COPY . .

@@ -1,5 +1,5 @@
 FROM node:12-slim
-WORKDIR /usr/src/app
+WORKDIR /usr/src/hat-service
 COPY package.json ./
 RUN sed -i '/\s*"type":\W*"module"/d' ./package.json
 RUN npm install
