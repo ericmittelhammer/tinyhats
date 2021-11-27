@@ -49,17 +49,18 @@ router.get('/list', async function list(req, res) {
     logger.info("Getting hats")
     let data = await helpers.getHatData()
     logger.info(`fetched ${data.length} hats`);
- newrelic.addCustomAttribute('hatListSize', data.length);
+    newrelic.addCustomAttribute('hatListSize', data.length);
     res.send(data)
 });
 
 async function applyHats(req, res, next) {
+    newrelic.addCustomAttribute('style', req.query.style);
     let numHats = 1;
     if (req.query.number != undefined) {
         numHats = req.query.number 
     }
     
-    let sanitizedHatStyle = helpers.sanitizeInput(req.query.style);
+    
 
     let hat = null;
     if (req.query.style == undefined) {
@@ -67,7 +68,7 @@ async function applyHats(req, res, next) {
         hat = await helpers.getRandomHat()
     } else {
         newrelic.addCustomAttribute('random', false);
-        hat = await helpers.getSpecificHat(sanitizedHatStyle);
+        hat = await helpers.getSpecificHat(req.query.style);
     }    
     if (hat == null) {
         logger.info(`Invalid hat style`)
@@ -82,7 +83,6 @@ async function applyHats(req, res, next) {
 
 router.get('/hatme', async function hatmeGet(req, res, next) {
     let qs = url.parse(req.url).query;
-    newrelic.addCustomAttribute('requestedStyle', req.query.style);
     newrelic.addCustomAttribute('customFace', false);
     req.face = await helpers.defaultImage()
     await applyHats(req, res, next);
@@ -90,8 +90,9 @@ router.get('/hatme', async function hatmeGet(req, res, next) {
 
 router.post('/hatme', upload.any(), async function hatmePost(req, res, next) {
     let qs = url.parse(req.url).query;
-    newrelic.addCustomAttribute('requestedStyle', req.query.style);
     newrelic.addCustomAttribute('customFace', true);
     req.face = req.files[0].buffer
     await applyHats(req, res, next);
 }); 
+
+//let sanitizedHatStyle = helpers.sanitizeInput(req.query.style);
