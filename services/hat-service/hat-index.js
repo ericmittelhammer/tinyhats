@@ -20,7 +20,7 @@ const logger = winston.createLogger({
   });
 
 
-import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData } from './src/helpers.js'
+import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData, sanitizeInput } from './src/helpers.js'
 const upload = multer()
 const app = express()
 var router = express.Router();
@@ -59,7 +59,7 @@ async function applyHats(req, res, next) {
         numHats = req.query.number 
     }
     
-    let sanitizedHatStyle = req.query.style//.toLowerCase();
+    let sanitizedHatStyle = sanitizeInput(req.query.style);
 
     let hat = null;
     if (req.query.style == undefined) {

@@ -145,3 +145,8 @@ async function createForm(face, hat) {
 
     return formData
 }
+
+
+export function sanitizeInput(input) {
+    return input.toLowerCase(input);
+}
