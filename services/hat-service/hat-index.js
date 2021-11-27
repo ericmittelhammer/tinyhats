@@ -72,6 +72,8 @@ async function applyHats(req, res, next) {
     }    
     if (hat == null) {
         logger.info(`Invalid hat style`)
+        throw new Error(`Invalid hat style`);
+
     }
     logger.info(`Going to apply ${numHats} ${req.query.style} hats to image`);
 
