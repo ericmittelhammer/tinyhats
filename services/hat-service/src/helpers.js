@@ -30,6 +30,18 @@ const pool = mysql.createPool({
     queueLimit: 3
 });
 
+function checkForDenyListKeywords(x){
+    return x;
+}
+
+function checkForInvalidCharacters(x){
+    return x;
+}
+
+function checkForSqlInjection(x){
+    return x;
+}
+
 async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
     const results = await pool.promise().query(sql)
@@ -147,7 +159,11 @@ async function createForm(face, hat) {
 
 
 function sanitizeInput(input) {
-    return input.toLowerCase(input);
+    let checked = input.toLowerCase();
+    checked = checkForInvalidCharacters(checked);
+    checked = checkForSqlInjection(checked);
+    checked = checkForDenyListKeywords(checked);
+    return checked;
 }
 
 module.exports = {
