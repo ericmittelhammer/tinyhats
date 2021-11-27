@@ -1,9 +1,10 @@
 FROM node:12-slim
 WORKDIR /usr/src/hat-service
 COPY package.json ./
-RUN sed -i '/\s*"type":\W*"module"/d' ./package.json
 RUN npm install
-COPY dist .
+COPY hat-index.js ./
+COPY newrelic.js ./
+COPY src ./src
 CMD [ "node", "--enable-source-maps", "--experimental-modules", "-r", "newrelic", "hat-index.js" ]
 
 # docker build -t manipulate .

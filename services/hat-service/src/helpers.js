@@ -1,10 +1,9 @@
-import newrelic from 'newrelic';
-import { connect } from 'http2';
-import mysql from 'mysql2'
-import fetch from 'node-fetch'
-import FormData from 'form-data'
-import winston from 'winston'
-import newrelicFormatter from '@newrelic/winston-enricher'
+const newrelic = require('newrelic');
+const mysql  = require('mysql2');
+const fetch = require('node-fetch')
+const FormData = require('form-data')
+const winston = require('winston')
+const newrelicFormatter = require('@newrelic/winston-enricher')
 
 const logger = winston.createLogger({
     level: 'info',
@@ -31,13 +30,13 @@ const pool = mysql.createPool({
     queueLimit: 3
 });
 
-export async function listPictures() {
+async function listPictures() {
     var sql = "SELECT * FROM main.images WHERE approve='true'";
     const results = await pool.promise().query(sql)
     return results
 };
 
-export async function downloadBuffer(url) {
+async function downloadBuffer(url) {
     let resp = await fetch(url,{
         method: 'GET',
     })
@@ -47,7 +46,7 @@ export async function downloadBuffer(url) {
     return data
 }
 
-export async function getSpecificHat(style) {
+async function getSpecificHat(style) {
     var sql = `SELECT * FROM main.images WHERE BINARY description='${style}' AND approve='true'`;
     const results = await pool.promise().query(sql)
         .catch(err => logger.error(err))
@@ -70,7 +69,7 @@ export async function getSpecificHat(style) {
     return image
 }
 
-export async function getHatData() {
+async function getHatData() {
     var sql = `SELECT description, url FROM main.images WHERE approve='true'`;
     const results = await pool.promise().query(sql)
     //logger.info(`gethatdata results: ${results}`);
@@ -80,7 +79,7 @@ export async function getHatData() {
     return hatList
 }
 
-export async function getRandomHat() {
+async function getRandomHat() {
     // get random hat picture
     let hats = await listPictures()
     let hatList = hats[0]
@@ -97,15 +96,15 @@ export async function getRandomHat() {
     return image
 }
 
-export async function defaultBoss() {
+async function defaultImage() {
     //my fav boss ever
-    let johnKinmonth = await downloadBuffer("https://user-images.githubusercontent.com/69332964/128645143-86405a62-691b-4de9-8500-b9362675e1db.png");
-    johnKinmonth = Buffer.from(johnKinmonth)
+    let img = await downloadBuffer("https://user-images.githubusercontent.com/69332964/128645143-86405a62-691b-4de9-8500-b9362675e1db.png");
+    img = Buffer.from(img)
 
-    return johnKinmonth
+    return img
 }
 
-export async function requestManipulate(face, hat, numberHats) {
+async function requestManipulate(face, hat, numberHats) {
     // hit the upload endpoint to upload image and retrieve unique image id
     let faceData = face
     for (var i = numberHats; i >= 1; i--) {
@@ -147,6 +146,17 @@ async function createForm(face, hat) {
 }
 
 
-export function sanitizeInput(input) {
+function sanitizeInput(input) {
     return input.toLowerCase(input);
+}
+
+module.exports = {
+    listPictures,
+    downloadBuffer,
+    getSpecificHat,
+    getHatData,
+    getRandomHat,
+    defaultImage,
+    requestManipulate,
+    sanitizeInput
 }

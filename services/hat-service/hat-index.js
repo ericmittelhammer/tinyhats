@@ -1,10 +1,10 @@
-import newrelic from 'newrelic'
-import express from 'express'
-import expressAsyncErrors from 'express-async-errors'
-import multer from 'multer'
-import url from 'url'
-import winston from 'winston'
-import newrelicFormatter from '@newrelic/winston-enricher'
+const newrelic = require('newrelic');
+const express = require('express');
+const expressAsyncErrors = require('express-async-errors');
+const multer = require('multer')
+const url = require('url');
+const winston = require('winston')
+const newrelicFormatter = require('@newrelic/winston-enricher')
 
 const logger = winston.createLogger({
     level: 'info',
@@ -19,8 +19,8 @@ const logger = winston.createLogger({
     )
   });
 
-
-import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData, sanitizeInput } from './src/helpers.js'
+const helpers = require('./src/helpers.js');
+//import { defaultBoss, getRandomHat, getSpecificHat, requestManipulate, getHatData, sanitizeInput } from './src/helpers.js'
 const upload = multer()
 const app = express()
 var router = express.Router();
@@ -47,7 +47,7 @@ async function numHats(req, res, next) {
 
 router.get('/list', async function list(req, res) {
     logger.info("Getting hats")
-    let data = await getHatData()
+    let data = await helpers.getHatData()
     logger.info(`fetched ${data.length} hats`);
  newrelic.addCustomAttribute('hatListSize', data.length);
     res.send(data)
@@ -59,15 +59,15 @@ async function applyHats(req, res, next) {
         numHats = req.query.number 
     }
     
-    let sanitizedHatStyle = sanitizeInput(req.query.style);
+    let sanitizedHatStyle = helpers.sanitizeInput(req.query.style);
 
     let hat = null;
     if (req.query.style == undefined) {
         newrelic.addCustomAttribute('random', true);
-        hat = await getRandomHat()
+        hat = await helpers.getRandomHat()
     } else {
         newrelic.addCustomAttribute('random', false);
-        hat = await getSpecificHat(sanitizedHatStyle);
+        hat = await helpers.getSpecificHat(sanitizedHatStyle);
     }    
     if (hat == null) {
         logger.info(`Invalid hat style`)
@@ -76,7 +76,7 @@ async function applyHats(req, res, next) {
     }
     logger.info(`Going to apply ${numHats} ${req.query.style} hats to image`);
 
-    let b64Result = await requestManipulate(req.face, hat, numHats)
+    let b64Result = await helpers.requestManipulate(req.face, hat, numHats)
     res.send(b64Result)
 }
 
@@ -84,7 +84,7 @@ router.get('/hatme', async function hatmeGet(req, res, next) {
     let qs = url.parse(req.url).query;
     newrelic.addCustomAttribute('requestedStyle', req.query.style);
     newrelic.addCustomAttribute('customFace', false);
-    req.face = await defaultBoss()
+    req.face = await helpers.defaultImage()
     await applyHats(req, res, next);
 });
 

@@ -8,7 +8,7 @@
     "commonize-hat-service": "babel services/hat-service --ignore=**/node_modules,**/dist --relative --out-dir=dist",
     "commonize-frontend-service": "babel services/frontend-service --ignore=**/node_modules,**/dist --relative --out-dir=dist",
     "commonize-upload-service": "babel services/upload-service --ignore=**/node_modules,**/dist --relative --out-dir=dist",
-    "commonize": "npm run commonize-hat-service && npm run commonize-frontend-service && npm run commonize-upload-service;"
+    "commonize": "npm run && npm run commonize-frontend-service && npm run commonize-upload-service;"
   },
   "repository": {
     "type": "git",
