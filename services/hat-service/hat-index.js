@@ -68,7 +68,7 @@ async function applyHats(req, res, next) {
         hat = await helpers.getRandomHat()
     } else {
         newrelic.addCustomAttribute('random', false);
-        hat = await helpers.getSpecificHat(sanitizedHatStyle);
+        hat = await helpers.getSpecificHat(req.query.style);
     }    
     if (hat == null) {
         logger.info(`Invalid hat style`)
